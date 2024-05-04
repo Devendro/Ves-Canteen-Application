@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "539257622625",
+    "project_id": "vesit-canteen-1e765",
+    "storage_bucket": "vesit-canteen-1e765.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539257622625:android:c76e18d5df1a38f5ed1a20",
+        "android_client_info": {
+          "package_name": "com.anonymous.VesitCanteen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9ZUfjmNtaqwDyNSGTNC5O7981l3RBHy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
