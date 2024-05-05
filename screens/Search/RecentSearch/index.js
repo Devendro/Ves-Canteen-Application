@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableNativeFeedback,
+  Pressable,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -8,7 +14,12 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-const RecentSearch = ({ title, recent, searchKeyword }) => {
+const RecentSearch = ({
+  title,
+  recent,
+  searchKeyword,
+  handleSearchedResultClick,
+}) => {
   const [titleBold, setTitleBold] = useState(title);
   function splitSentenceWithKeyword(sentence, keyword) {
     if (!keyword || keyword === "") {
@@ -18,38 +29,41 @@ const RecentSearch = ({ title, recent, searchKeyword }) => {
       if (!sentence?.toLowerCase().startsWith(keyword?.toLowerCase())) {
         setTitleBold(sentence);
       } else {
-        const regex = new RegExp(keyword, 'i');
+        const regex = new RegExp(keyword, "i");
         const parts = sentence.split(regex, 2);
         setTitleBold(parts[1]);
       }
     }
   }
 
-  // useEffect(() => {
-  //   splitSentenceWithKeyword(title, searchKeyword);
-  // }, [searchKeyword]);
-
-  // useEffect(() => {
-  //   console.log(titleBold);
-  // }, [titleBold]);
-
+  // function to handle search and click event
+  const handleClickEvent = () => {
+    if (!recent) {
+      handleSearchedResultClick();
+    }
+  };
   return (
-    <View style={styles.searchCard}>
-      <View style={styles.searchHeading}>
-        <FontAwesomeIcon
-          icon={recent ? faClockRotateLeft : faSearch}
-          color="#51636E"
-        />
-        <View style={styles.searchTitle}>
-          <Text style={styles.title}>{searchKeyword}</Text>
-          <Text style={styles.boldtitle}>{titleBold}</Text>
+    <TouchableNativeFeedback onPress={handleClickEvent}>
+      <View style={styles.searchCard}>
+        <View style={styles.searchHeading}>
+          <FontAwesomeIcon
+            icon={recent ? faClockRotateLeft : faSearch}
+            color="#51636E"
+          />
+          <View style={styles.searchTitle}>
+            <Text style={styles.title}>{title}</Text>
+            {/* <Text style={styles.title}>{searchKeyword}</Text>
+          <Text style={styles.boldtitle}>{titleBold}</Text> */}
+          </View>
         </View>
+        <Pressable style={styles.cancelIcon}>
+          <FontAwesomeIcon
+            icon={recent ? faXmark : faChevronRight}
+            color="#51636E"
+          />
+        </Pressable>
       </View>
-      <FontAwesomeIcon
-        icon={recent ? faXmark : faChevronRight}
-        color="#51636E"
-      />
-    </View>
+    </TouchableNativeFeedback>
   );
 };
 
@@ -60,10 +74,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
   },
   searchHeading: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    flex: 1,
     flexDirection: "row",
     gap: 15,
   },
@@ -75,9 +90,13 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     color: "#51636E",
   },
-  boldtitle:{
+  boldtitle: {
     fontSize: 13,
     fontFamily: "Poppins-SemiBold",
     color: "#51636E",
-  }
+  },
+  cancelIcon: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
 });

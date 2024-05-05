@@ -50,7 +50,6 @@ const initialState = {
       case LOGOUT:
         return initialState;
       case "SHOW_WELCOME_MESSAGE":
-        console.log("Hello")
         return { ...state, showWelcomeMessage: action.payload };
       case "NOTIFICATION_LIST":
         return { ...state, notifications: action.payload };

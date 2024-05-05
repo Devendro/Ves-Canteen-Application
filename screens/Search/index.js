@@ -18,25 +18,60 @@ import { useNavigation } from "@react-navigation/native";
 import RecentSearch from "./RecentSearch";
 import Categories from "./Categories";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { searchFoods } from "../../context/actions/food";
+import { RECENT_SEARCHED } from "../../context/constants/food";
 
 const Search = () => {
   const categoryData = useSelector((state) => state.categories.docs);
+  const recentSearchedData = useSelector((state) => state.food.recentSearched);
+
   const navigation = useNavigation();
   const textInputRef = useRef(null);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [isloaded, setIsloaded] = useState(false);
-
-  // handle search input function
+  const [searchResults, setSearchResults] = useState([]);
+  const dispatch = useDispatch();
   const handleSearchInput = (text) => {
-    setSearchKeyword(text);
+    setSearchKeyword(text); // Call the debounced function instead of setSearchKeyword directly
   };
 
   useEffect(() => {
-    setIsloaded(true);
     setTimeout(() => {
       textInputRef.current.focus();
     }, 500);
   }, []);
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      if (searchKeyword?.length > 0) {
+        dispatch(
+          searchFoods({ name: searchKeyword }, (res) => {
+            setSearchResults(res);
+          })
+        );
+      }
+    }, 200);
+
+    return () => clearTimeout(getData);
+  }, [searchKeyword]);
+
+  // function to handle click on recent search
+
+  // function to handle click on search result
+  const handleSearchedResultClick = (data) => {
+    let updatedRecentSearches;
+    if (recentSearchedData?.length <= 5) {
+      // Create a new array by filtering out the clicked item and then adding the new data
+      updatedRecentSearches = recentSearchedData
+        .filter((obj) => obj._id !== data?._id)
+        .concat(data);
+    } else {
+      updatedRecentSearches = recentSearchedData.slice(1).concat(data);
+    }
+    // Dispatch an action with the updated data
+    dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
+  };
+
   return (
     <View
       style={{
@@ -80,22 +115,42 @@ const Search = () => {
           )}
         </Animated.View>
         <Text style={styles.recentSearchHead}>Recent Search</Text>
-        {searchKeyword && (
-          <View style={styles.recentSearch}>
-            <RecentSearch title={"Aloo Paratha"} searchKeyword={searchKeyword}/>
-            <RecentSearch title={"Vada Pav"} searchKeyword={searchKeyword}/>
-            <RecentSearch title={"Mini Lunch"} searchKeyword={searchKeyword}/>
-          </View>
-        )}
+
+        {/* To Show Recent Searched */}
         {!searchKeyword && (
           <View style={styles.recentSearch}>
-            <RecentSearch title={"Aloo Paratha"} recent={true} />
-            <RecentSearch title={"Vada Pav"} recent={true} />
-            <RecentSearch title={"Mini Lunch"} recent={true} />
+            <FlatList
+              data={recentSearchedData}
+              keyExtractor={(item) => item?._id}
+              renderItem={({ item, index }) => (
+                <RecentSearch title={item?._source?.name} recent={true} />
+              )}
+            />
+          </View>
+        )}
+
+        {/* To Show Search Result Coming from server */}
+        {searchKeyword && (
+          <View style={styles.recentSearch}>
+            <RecentSearch title={searchKeyword} />
+            <FlatList
+              keyboardShouldPersistTaps="always"
+              data={searchResults}
+              keyExtractor={(item) => item?._id}
+              renderItem={({ item, index }) => (
+                <RecentSearch
+                  title={item?._source?.name}
+                  searchKeyword={searchKeyword}
+                  handleSearchedResultClick={() => {
+                    handleSearchedResultClick(item);
+                  }}
+                />
+              )}
+            />
           </View>
         )}
       </View>
-      {!searchKeyword && (
+      {/* {!searchKeyword && (
         <View style={styles.categories}>
           <View>
             <Text style={styles.categoriesHead}>Categories Available</Text>
@@ -108,7 +163,7 @@ const Search = () => {
             )}
           />
         </View>
-      )}
+      )} */}
     </View>
   );
 };
