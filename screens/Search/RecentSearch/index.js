@@ -19,6 +19,7 @@ const RecentSearch = ({
   recent,
   searchKeyword,
   handleSearchedResultClick,
+  removeRecentSearch
 }) => {
   const [titleBold, setTitleBold] = useState(title);
   function splitSentenceWithKeyword(sentence, keyword) {
@@ -42,6 +43,10 @@ const RecentSearch = ({
       handleSearchedResultClick();
     }
   };
+
+  const _removeRecentSearch = () => {
+    removeRecentSearch();
+  };
   return (
     <TouchableNativeFeedback onPress={handleClickEvent}>
       <View style={styles.searchCard}>
@@ -56,7 +61,7 @@ const RecentSearch = ({
           <Text style={styles.boldtitle}>{titleBold}</Text> */}
           </View>
         </View>
-        <Pressable style={styles.cancelIcon}>
+        <Pressable style={styles.cancelIcon} onPress={_removeRecentSearch}>
           <FontAwesomeIcon
             icon={recent ? faXmark : faChevronRight}
             color="#51636E"

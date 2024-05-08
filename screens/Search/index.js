@@ -70,8 +70,16 @@ const Search = () => {
     }
     // Dispatch an action with the updated data
     dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
+    navigation.navigate("Foods")
   };
 
+  // function to remove recent search from history
+  const removeRecentSearch = (data) => {
+    let updatedRecentSearches = recentSearchedData.filter(
+      (obj) => obj._id !== data?._id
+    );
+    dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
+  };
   return (
     <View
       style={{
@@ -108,6 +116,8 @@ const Search = () => {
               style={{ flex: 0.04 }}
               onPress={() => {
                 handleSearchInput("");
+                setSearchResults("");
+                setSearchKeyword("");
               }}
             >
               <FontAwesomeIcon icon={faXmark} color="#667C8A" size={15} />
@@ -120,10 +130,17 @@ const Search = () => {
         {!searchKeyword && (
           <View style={styles.recentSearch}>
             <FlatList
+              keyboardShouldPersistTaps="always"
               data={recentSearchedData}
               keyExtractor={(item) => item?._id}
               renderItem={({ item, index }) => (
-                <RecentSearch title={item?._source?.name} recent={true} />
+                <RecentSearch
+                  title={item?._source?.name}
+                  recent={true}
+                  removeRecentSearch={() => {
+                    removeRecentSearch(item);
+                  }}
+                />
               )}
             />
           </View>
@@ -150,7 +167,7 @@ const Search = () => {
           </View>
         )}
       </View>
-      {/* {!searchKeyword && (
+      {!searchKeyword && (
         <View style={styles.categories}>
           <View>
             <Text style={styles.categoriesHead}>Categories Available</Text>
@@ -163,7 +180,7 @@ const Search = () => {
             )}
           />
         </View>
-      )} */}
+      )}
     </View>
   );
 };

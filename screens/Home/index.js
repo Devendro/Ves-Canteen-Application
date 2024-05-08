@@ -9,18 +9,12 @@ import {
   Text,
   View,
   Image,
-  Platform,
   ScrollView,
   FlatList,
   StatusBar,
-  Pressable,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import CategoryItem from "./CategoryItem";
 import { useNavigation } from "@react-navigation/native";
-import Animated from "react-native-reanimated";
 import PopularFoodItem from "./PopularFoodItem";
 import BottomSheet, {
   BottomSheetView,
@@ -29,6 +23,8 @@ import BottomSheet, {
 import FoodDetail from "../FoodDetail";
 import { useDispatch } from "react-redux";
 import { getCategories } from "../../context/actions/category";
+import SearchBar from "../../components/SearchBar";
+import FoodCard from "../../components/FoodCard";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -149,66 +145,7 @@ export default function Home() {
         </Text>
 
         <View style={{ backgroundColor: "#fff", paddingBottom: 8 }}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate("Search");
-            }}
-          >
-            <Animated.View
-              sharedTransitionTag="search"
-              style={{
-                alignItems: "center",
-                flexDirection: "row",
-                marginTop: 5,
-                backgroundColor: "white",
-                borderRadius: 10,
-                paddingHorizontal: 15,
-                marginHorizontal: 10,
-                ...Platform.select({
-                  ios: {
-                    shadowColor: "#000",
-                    shadowOffset: {
-                      width: 0,
-                      height: 4,
-                    },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 6,
-                  },
-                  android: {
-                    elevation: 4,
-                  },
-                }),
-              }}
-            >
-              <FontAwesomeIcon icon={faSearch} color="#667C8A" size={15} />
-
-              <View
-                selectionColor={"#667C8A"}
-                showSoftInputOnFocus={false}
-                style={{
-                  fontSize: 14,
-                  width: "100%",
-                  color: "#667C8A",
-                  padding: 10,
-                  fontFamily: "Poppins-Regular",
-                  textAlignVertical: "center",
-                }}
-                placeholder="Search our delicious Chinese samosa"
-                placeholderTextColor="#667C8A"
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    color: "#667C8A",
-                    textAlignVertical: "center",
-                    fontSize: 14,
-                  }}
-                >
-                  Search our delicious Chinese samosa
-                </Text>
-              </View>
-            </Animated.View>
-          </Pressable>
+        <SearchBar/>
         </View>
 
         <FlatList
@@ -245,7 +182,7 @@ export default function Home() {
           </View>
         </View>
 
-        <PopularFoodItem
+        <FoodCard
           navigation={navigation}
           handleSheetChanges={(index) => {
             handleSheetChanges(index);

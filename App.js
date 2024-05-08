@@ -16,6 +16,7 @@ import Splash from "./screens/Splash";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PushNotification from "./PushNotification";
 import Search from "./screens/Search";
+import Foods from "./screens/Foods";
 
 const Stack = createNativeStackNavigator();
 
@@ -60,7 +61,7 @@ export default function App() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName={showOnboarding ? "Onboarding" : "Home"}
+              initialRouteName={showOnboarding ? "Onboarding" : "Foods"}
               screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="Splash" component={Splash} />
@@ -82,6 +83,7 @@ export default function App() {
                 component={Search}
                 options={{ animation: "slide_from_bottom" }}
               />
+              <Stack.Screen name="Foods" component={Foods} />
             </Stack.Navigator>
           </NavigationContainer>
         </GestureHandlerRootView>
