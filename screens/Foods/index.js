@@ -1,9 +1,17 @@
-import { StyleSheet, View, StatusBar, Text, Pressable, FlatList } from "react-native";
-import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  StatusBar,
+  Text,
+  Pressable,
+  FlatList,
+} from "react-native";
+import React, { useEffect, useCallback, useRef, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import SearchBar from "../../components/SearchBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import FoodDetail from "../FoodDetail";
 import {
   faCaretDown,
   faSliders,
@@ -13,23 +21,29 @@ import FoodCard from "../../components/FoodCard";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { getFoods } from "../../context/actions/food";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 
 const Foods = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const bottomSheetRef = useRef();
+  const snapPoints = useMemo(() => ["85%"], []);
   const [filters, setFilters] = useState({
     veg: false,
     nonveg: false,
     rating: false,
   });
-  const [foods, setFoods] = useState()
+  const [foods, setFoods] = useState();
   const [sortBy, setSortBy] = useState();
+  const [foodDetail, setFoodDetail] = useState();
 
   /**
    * @description useEffect to call functions on initial screen load
    */
   useEffect(() => {
-    console.log(route.params)
     getAllFoods();
   }, []);
 
@@ -38,12 +52,19 @@ const Foods = ({ route }) => {
    */
   const getAllFoods = () => {
     dispatch(
-      getFoods({keyword: route?.params?.keyword ? route.params.keyword : "Idli"}, (res) => {
-        setFoods(res);
-      })
+      getFoods(
+        { keyword: route?.params?.keyword ? route.params.keyword : "Idli" },
+        (res) => {
+          setFoods(res);
+        }
+      )
     );
   };
 
+  /**
+   * @description This function will called to handle changes in filters for food
+   * @param {filterOptionName} string
+   */
   const handleFilterChanges = (filterOptionName) => {
     setFilters((previousState) => {
       return {
@@ -52,6 +73,25 @@ const Foods = ({ route }) => {
       };
     });
   };
+
+  /**
+   * @description This function will called on click on food card to open bottom sheet
+   * @param {number} index
+   */
+  const handleSheetChanges = useCallback((index, data) => {
+    bottomSheetRef.current?.snapToIndex(index);
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+      />
+    ),
+    []
+  );
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -132,19 +172,38 @@ const Foods = ({ route }) => {
           </View>
         </Pressable>
       </ScrollView>
-      
+
       <FlatList
-      data={foods?.docs}
-      renderItem={({ item, index }) => (
-        <FoodCard data={item}/>
-      )}
+        data={foods?.docs}
+        renderItem={({ item, index }) => (
+          <FoodCard
+            data={item}
+            handleSheetChanges={(index, data) => {
+              setFoodDetail(data)
+              handleSheetChanges(index, data);
+            }}
+          />
+        )}
       />
-      {/* <ScrollView>
-        <FoodCard />
-        <FoodCard />
-        <FoodCard />
-        <FoodCard />
-      </ScrollView> */}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        onChange={handleSheetChanges}
+        enablePanDownToClose={true}
+        backgroundStyle={{
+          backgroundColor: "#f2f2f2"
+        }}
+      >
+        <BottomSheetView
+          backdropComponent={({ style }) => (
+            <View style={[style, { backgroundColor: "rgba(0, 0, 0, 0.5)" }]} />
+          )}
+        >
+          <FoodDetail data={foodDetail}/>
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
@@ -165,9 +224,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 5,
     borderWidth: 0.7,
-    // borderColor: "#DADADA",
     borderRadius: 7,
-    // backgroundColor: "rgba(255, 195, 0, 0.1)",
   },
   filterText: {
     fontFamily: "Poppins-Medium",

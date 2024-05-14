@@ -4,7 +4,7 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Animated from "react-native-reanimated";
 
-const FoodCard = ({ data, navigation, handleSheetChanges }) => {
+const FoodCard = ({ data, handleSheetChanges }) => {
   return (
     <View
       style={{
@@ -31,7 +31,7 @@ const FoodCard = ({ data, navigation, handleSheetChanges }) => {
           width: "100%",
         }}
         onPress={() => {
-          handleSheetChanges(0);
+          handleSheetChanges(0, data);
         }}
       >
         <Animated.Image

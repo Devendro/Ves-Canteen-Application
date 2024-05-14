@@ -1,18 +1,27 @@
-import React, { useCallback, useMemo, useRef } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import Animated from "react-native-reanimated";
+import React, { useRef, useState } from "react";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import LottieView from "lottie-react-native";
+import { AirbnbRating, Rating } from "react-native-ratings";
+import { width } from "@fortawesome/free-solid-svg-icons/fa0";
 
-const FoodDetail = () => {
-    const snapPoints = useMemo(() => ["75%"], []);
-  // renders
+const FoodDetail = ({ data }) => {
+  const likeRef = useRef();
+  const [liked, setLiked] = useState(false);
+  /**
+   * @description this function is to add food to favourite
+   */
+  const handleLike = () => {
+    if (liked) {
+      likeRef?.current?.play(60, 0);
+    } else {
+      likeRef?.current?.play(0, 60);
+    }
+    setLiked(!liked);
+  };
   return (
     <View style={styles.container}>
-      {/* <BottomSheet snapPoints={snapPoints} enablePanDownToClose={true}> */}
-        <View>
-        <Animated.Image
-          // resizeMode={"contain"}
-          sharedTransitionTag={"fsdkfdkfsdjfjsdkfj"}
+      <View style={styles.foodImage}>
+        <Image
           source={require("../../assets/images/Noodlessss.jpg")}
           style={{
             alignItems: "center",
@@ -21,21 +30,52 @@ const FoodDetail = () => {
             width: "100%",
           }}
         />
+      </View>
+      <View style={styles.foodDetail}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.foodTitle}>{data?.name}</Text>
+          <Pressable onPress={handleLike}>
+            <LottieView
+              ref={likeRef}
+              style={{ width: 50, height: 50 }}
+              source={require("../../assets/images/Liked.json")}
+              loop={false}
+            />
+          </Pressable>
         </View>
-      {/* </BottomSheet> */}
+        <View>
+          <AirbnbRating
+            defaultRating={2.5}
+            showRating= {false}
+            isDisabled= {true}
+            size={12}
+            starContainerStyle={{width: 200}}
+          />
+          <Text>61 Ratings</Text>
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    padding: 5,
+    borderRadius: 20,
     backgroundColor: "white",
   },
-  contentContainer: {
-    flex: 1,
+  foodDetail: {
+    paddingHorizontal: 5,
+  },
+  titleContainer: {
+    justifyContent: "space-between",
     alignItems: "center",
+    flexDirection: "row",
+  },
+  foodTitle: {
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 16,
   },
 });
 

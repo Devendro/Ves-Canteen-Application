@@ -15,7 +15,6 @@ import {
 } from "react-native";
 import CategoryItem from "./CategoryItem";
 import { useNavigation } from "@react-navigation/native";
-import PopularFoodItem from "./PopularFoodItem";
 import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
@@ -183,7 +182,6 @@ export default function Home() {
         </View>
 
         <FoodCard
-          navigation={navigation}
           handleSheetChanges={(index) => {
             handleSheetChanges(index);
           }}
