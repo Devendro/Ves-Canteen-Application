@@ -10,7 +10,8 @@ const Header = ({ title }) => {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginTop: 50,
+        // marginTop: 50,
+        paddingHorizontal: 10
       }}
     >
       <TouchableOpacity

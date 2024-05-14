@@ -4,13 +4,13 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Animated from "react-native-reanimated";
 
-const FoodCard = ({ navigation, handleSheetChanges }) => {
+const FoodCard = ({ data, navigation, handleSheetChanges }) => {
   return (
     <View
       style={{
         justifyContent: "space-between",
         alignItems: "center",
-        // marginTop: 20,
+        marginTop: 5,
         backgroundColor: "#FFF",
         borderRadius: 15,
 
@@ -23,7 +23,7 @@ const FoodCard = ({ navigation, handleSheetChanges }) => {
         shadowOpacity: 0.3,
         shadowRadius: 6,
         elevation: 8,
-        marginBottom: 20,
+        marginBottom: 15,
       }}
     >
       <Pressable
@@ -67,7 +67,7 @@ const FoodCard = ({ navigation, handleSheetChanges }) => {
               fontFamily: "Poppins-Medium",
             }}
           >
-            Schezwan Noodles
+            {data?.name}
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text
@@ -92,7 +92,7 @@ const FoodCard = ({ navigation, handleSheetChanges }) => {
                 fontFamily: "Poppins-Medium",
               }}
             >
-              ₹40.00
+              ₹{data?.price}
             </Text>
           </View>
         </View>

@@ -46,7 +46,7 @@ const Search = () => {
       if (searchKeyword?.length > 0) {
         dispatch(
           searchFoods({ name: searchKeyword }, (res) => {
-            setSearchResults(res);
+            setSearchResults(res?.docs);
           })
         );
       }
@@ -70,7 +70,8 @@ const Search = () => {
     }
     // Dispatch an action with the updated data
     dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
-    navigation.navigate("Foods")
+
+    navigation.navigate("Foods", { keyword: data.name });
   };
 
   // function to remove recent search from history
@@ -135,7 +136,7 @@ const Search = () => {
               keyExtractor={(item) => item?._id}
               renderItem={({ item, index }) => (
                 <RecentSearch
-                  title={item?._source?.name}
+                  title={item?.name}
                   recent={true}
                   removeRecentSearch={() => {
                     removeRecentSearch(item);
@@ -156,7 +157,7 @@ const Search = () => {
               keyExtractor={(item) => item?._id}
               renderItem={({ item, index }) => (
                 <RecentSearch
-                  title={item?._source?.name}
+                  title={item?.name}
                   searchKeyword={searchKeyword}
                   handleSearchedResultClick={() => {
                     handleSearchedResultClick(item);

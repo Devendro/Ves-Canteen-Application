@@ -5,13 +5,15 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  StatusBar
 } from "react-native";
-import Header from "../Header";
+import Header from "../../components/Header";
 import CartItem from "./CartItem";
 
 export default function Cart() {
   return (
     <View style={styles.cartContainer}>
+      <StatusBar barStyle="dark-content" />
       <Header title={"Order Cart"} />
       <ScrollView>
         <CartItem />

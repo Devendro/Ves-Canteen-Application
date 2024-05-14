@@ -61,7 +61,7 @@ export default function App() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName={showOnboarding ? "Onboarding" : "Foods"}
+              initialRouteName={showOnboarding ? "Onboarding" : "Home"}
               screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="Splash" component={Splash} />
