@@ -31,6 +31,7 @@ const Foods = ({ route }) => {
   const dispatch = useDispatch();
   const bottomSheetRef = useRef();
   const snapPoints = useMemo(() => ["85%"], []);
+  const [isBottomSheetClose, setIsBottomSheetClose] = useState(false)
   const [filters, setFilters] = useState({
     veg: false,
     nonveg: false,
@@ -79,6 +80,7 @@ const Foods = ({ route }) => {
    * @param {number} index
    */
   const handleSheetChanges = useCallback((index, data) => {
+    index == 0 ? setIsBottomSheetClose(false) : setIsBottomSheetClose(true)
     bottomSheetRef.current?.snapToIndex(index);
   }, []);
 
@@ -201,7 +203,7 @@ const Foods = ({ route }) => {
             <View style={[style, { backgroundColor: "rgba(0, 0, 0, 0.5)" }]} />
           )}
         >
-          <FoodDetail data={foodDetail}/>
+          <FoodDetail isBottomSheetClose={isBottomSheetClose} data={foodDetail}/>
         </BottomSheetView>
       </BottomSheet>
     </View>

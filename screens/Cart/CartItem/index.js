@@ -3,14 +3,28 @@ import {
   Text,
   View,
   Image,
-  Platform,
+  Pressable,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const CartItem = () => {
+const CartItem = ({ data, _removeCartItem }) => {
+  const [count, setCount] = useState(data?.count || 1);
+
+  /**
+   * @description this function is used to handle counts of food item to store in cart
+   * @params {string} operation
+   */
+  const handleCounts = (operation) => {
+    operation === "inc"
+      ? setCount((prevState) => (prevState >= 5 ? 5 : prevState + 1))
+      : setCount((prevState) => (prevState <= 1 ? 1 : prevState - 1));
+  };
+
+  
+
   return (
     <View style={styles.cartItemContainer}>
       <View style={styles.firstContainer}>
@@ -20,16 +34,30 @@ const CartItem = () => {
         />
       </View>
       <View style={styles.secondContainer}>
-        <Text style={styles.cartItemTitle}>Samosa Plate</Text>
+        <Text style={styles.cartItemTitle}>{data?.name}</Text>
         <View style={styles.cartItemCount}>
-          <Text style={styles.cartItemCountSign}>-</Text>
-          <Text style={styles.cartItemCountValue}>1</Text>
-          <Text style={styles.cartItemCountSign}>+</Text>
+          <Pressable
+            style={styles.cartItemCountSign}
+            onPress={() => handleCounts("dec")}
+          >
+            <Text style={styles.cartItemCountSignText}>-</Text>
+          </Pressable>
+          <Text style={styles.cartItemCountValue}>{count}</Text>
+          <Pressable
+            style={styles.cartItemCountSign}
+            onPress={() => handleCounts("inc")}
+          >
+            <Text style={styles.cartItemCountSignText}>+</Text>
+          </Pressable>
         </View>
       </View>
       <View style={styles.thirdContainer}>
-        <TouchableOpacity style={styles.cartItemRemoveContainer}>
-          <FontAwesomeIcon style={styles.cartItemRemove} icon={faXmark} size={18} />
+        <TouchableOpacity style={styles.cartItemRemoveContainer} onPress={() => {_removeCartItem(data?._id)}}>
+          <FontAwesomeIcon
+            style={styles.cartItemRemove}
+            icon={faXmark}
+            size={18}
+          />
         </TouchableOpacity>
         <Text style={styles.cartItemPrice}>₹ 40.00</Text>
       </View>
@@ -46,34 +74,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-    marginTop: 15,
-    borderColor: "#DADADA",
-    borderWidth: 0.8
-    // ...Platform.select({
-    //   ios: {
-    //     shadowColor: "#000",
-    //     shadowOffset: {
-    //       width: 0,
-    //       height: 4,
-    //     },
-    //     shadowOpacity: 0.4,
-    //     shadowRadius: 6,
-    //   },
-    //   android: {
-    //     elevation: 1,
-    //   },
-    // }),
   },
   firstContainer: { flex: 0.4 },
   image: { height: 100, width: 105, resizeMode: "cover", borderRadius: 5 },
   secondContainer: {
     flex: 0.35,
-    gap: 25
+    gap: 25,
   },
   cartItemTitle: {
     fontFamily: "Poppins-Medium",
+    width: "100%",
     fontSize: 14,
   },
   cartItemCount: {
@@ -88,6 +98,8 @@ const styles = StyleSheet.create({
   },
   cartItemCountSign: {
     flex: 1,
+  },
+  cartItemCountSignText: {
     fontFamily: "Poppins-SemiBold",
     fontSize: 18,
     color: "#FFC300",
@@ -105,7 +117,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column",
-    gap: 45
+    gap: 45,
   },
   cartItemRemoveContainer: {
     alignItems: "flex-end",

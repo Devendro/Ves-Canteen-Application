@@ -1,15 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import LottieView from "lottie-react-native";
 import { AirbnbRating } from "react-native-ratings";
 import { ScrollView } from "react-native-gesture-handler";
 import { TextInput } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { ADD_CART_ITEM } from "../../context/constants/cart";
 
-const FoodDetail = ({ data }) => {
+const FoodDetail = ({ data, isBottomSheetClose }) => {
   const likeRef = useRef();
+  const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
-  const [ itemCount, setItemCount] = useState(1);
-  
+  const [itemCount, setItemCount] = useState(1);
+  const [preparationNotes, setPreparationNotes] = useState("");
+
+  useEffect(() => {
+    if (isBottomSheetClose) {
+      setItemCount(1);
+      setLiked(false);
+      setPreparationNotes("");
+    }
+  }, [isBottomSheetClose]);
+
   /**
    * @description this function is to add food to favourite
    */
@@ -22,6 +34,36 @@ const FoodDetail = ({ data }) => {
     setLiked(!liked);
   };
 
+  /**
+   * @description this function is used to handle counts of food item to store in cart
+   * @params {string} operation
+   */
+  const handleCounts = (operation) => {
+    operation === "inc"
+      ? setItemCount((prevState) => (prevState >= 5 ? 5 : prevState + 1))
+      : setItemCount((prevState) => (prevState <= 1 ? 1 : prevState - 1));
+  };
+
+  /**
+   * @description this function is used to add item in cart in redux state
+   * @params {string} item
+   */
+  const addItemToCart = (item) => {
+    let cartObj = {
+      ...item,
+      count: itemCount,
+      notes: preparationNotes
+    };
+    dispatch({ type: ADD_CART_ITEM, data: cartObj });
+  };
+
+  /**
+   * @description this function is used to handle food preparation notes changes
+   * @params {string} text
+   */
+  const handlePreparationNoteChange = (text) => {
+    setPreparationNotes(text);
+  };
   return (
     <View style={styles.bottomSheetContainer}>
       <ScrollView
@@ -31,9 +73,7 @@ const FoodDetail = ({ data }) => {
         <View style={styles.container}>
           <View style={styles.foodImage}>
             <Image
-              source={
-                require("../../assets/images/Noodlessss.jpg")
-              }
+              source={require("../../assets/images/Noodlessss.jpg")}
               style={{
                 alignItems: "center",
                 borderRadius: 20,
@@ -45,9 +85,11 @@ const FoodDetail = ({ data }) => {
           <View style={styles.foodDetail}>
             <View style={styles.topFoodHeader}>
               <Image
-                source={data?.veg
-                  ? require("../../assets/images/veg.png")
-                  : require("../../assets/images/nonveg.png")}
+                source={
+                  data?.veg
+                    ? require("../../assets/images/veg.png")
+                    : require("../../assets/images/nonveg.png")
+                }
                 style={{ width: 15, height: 15 }}
               />
               <Text style={styles.category}>{data?.categoryData?.name}</Text>
@@ -81,28 +123,50 @@ const FoodDetail = ({ data }) => {
             </View>
           </View>
         </View>
-        <View style={{...styles.container, marginBottom: 90, paddingBottom: 8}}>
-          <View style={{padding: 5}}>
+        <View
+          style={{ ...styles.container, marginBottom: 90, paddingBottom: 8 }}
+        >
+          <View style={{ padding: 5 }}>
             <Text style={styles.textInputHead}>
-            Add Preparing Instructions (Optional)
-          </Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Eg: Don't make it spicy"
-          />
+              Add Preparing Instructions (Optional)
+            </Text>
+            <TextInput
+              onChangeText={(text) => {
+                handlePreparationNoteChange(text);
+              }}
+              style={styles.textInput}
+              placeholder="Eg: Don't make it spicy"
+            />
           </View>
-          
         </View>
       </ScrollView>
       <View style={styles.bottomContainer}>
         <View style={styles.cartItemCount}>
-          <Text style={styles.cartItemCountSign}>-</Text>
+          <Pressable
+            onPress={() => {
+              handleCounts("dec");
+            }}
+            style={{ paddingHorizontal: 10 }}
+          >
+            <Text style={styles.cartItemCountSign}>-</Text>
+          </Pressable>
           <Text style={styles.cartItemCountValue}>{itemCount}</Text>
-          <Text style={styles.cartItemCountSign}>+</Text>
+          <Pressable
+            onPress={() => {
+              handleCounts("inc");
+            }}
+            style={{ paddingHorizontal: 10 }}
+          >
+            <Text style={styles.cartItemCountSign}>+</Text>
+          </Pressable>
         </View>
-        <Pressable style={styles.addToCart}>
+        <Pressable
+          style={styles.addToCart}
+          onPress={() => {
+            addItemToCart(data);
+          }}
+        >
           <Text style={styles.cartText}>Add Item: ₹{data?.price}</Text>
-          {/* <Text style={styles.cartText}></Text> */}
         </Pressable>
       </View>
     </View>
@@ -173,7 +237,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontFamily: "Poppins-Medium",
     color: "#676767",
-    textAlignVertical: 'top'
+    textAlignVertical: "top",
   },
   bottomContainer: {
     backgroundColor: "#fff",
@@ -184,7 +248,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   cartItemCount: {
     flexDirection: "row",
@@ -209,18 +273,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
   },
-  addToCart:{
+  addToCart: {
     alignItems: "center",
     backgroundColor: "#FFC300",
     paddingHorizontal: 25,
     paddingVertical: 10,
-    borderRadius: 7
+    borderRadius: 7,
   },
-  cartText:{
+  cartText: {
     marginTop: 2,
     color: "#FFF",
-    fontFamily: "Poppins-SemiBold"
-  }
+    fontFamily: "Poppins-SemiBold",
+  },
 });
 
 export default FoodDetail;
