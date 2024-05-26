@@ -17,6 +17,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PushNotification from "./PushNotification";
 import Search from "./screens/Search";
 import Foods from "./screens/Foods";
+import Toast from "react-native-toast-message";
+import { FooterMenu } from "./screens/FooterMenu";
 
 const Stack = createNativeStackNavigator();
 
@@ -86,6 +88,8 @@ export default function App() {
               <Stack.Screen name="Foods" component={Foods} />
             </Stack.Navigator>
           </NavigationContainer>
+          <Toast />
+          {/* <FooterMenu/> */}
         </GestureHandlerRootView>
       </PersistGate>
     </Provider>

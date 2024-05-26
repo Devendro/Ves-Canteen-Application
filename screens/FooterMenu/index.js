@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faHome, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faEllipsis, faCartArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faUser } from "@fortawesome/free-solid-svg-icons";
 
 export function FooterMenu() {
@@ -18,7 +18,7 @@ export function FooterMenu() {
         <FontAwesomeIcon
           icon={faHome}
           style={styles.footerIcon}
-          size={18}
+          size={15}
           color="#667C8A"
         />
         <Text style={styles.footerText}>Home</Text>
@@ -26,7 +26,7 @@ export function FooterMenu() {
       <View style={styles.footerItem}>
         <FontAwesomeIcon
           icon={faHeart}
-          size={18}
+          size={15}
           style={styles.footerIcon}
           color="#667C8A"
         />
@@ -35,7 +35,16 @@ export function FooterMenu() {
       <View style={styles.footerItem}>
         <FontAwesomeIcon
           icon={faUser}
-          size={18}
+          size={15}
+          style={styles.footerIcon}
+          color="#667C8A"
+        />
+        <Text style={styles.footerText}>Account</Text>
+      </View>
+      <View style={styles.footerItem}>
+        <FontAwesomeIcon
+          icon={faCartArrowDown}
+          size={15}
           style={styles.footerIcon}
           color="#667C8A"
         />
@@ -44,7 +53,7 @@ export function FooterMenu() {
       <View style={styles.footerItem}>
         <FontAwesomeIcon
           icon={faEllipsis}
-          size={18}
+          size={15}
           style={styles.footerIcon}
           color="#667C8A"
         />
@@ -88,7 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#667C8A",
     fontFamily: "Poppins-Medium",
   },

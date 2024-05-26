@@ -16,6 +16,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { login } from "../../context/actions/user";
+import Toast from "react-native-toast-message";
 
 const screenWidth = Dimensions.get("window").width;
 const initialColorState = {
@@ -115,11 +118,41 @@ const styles = StyleSheet.create({
 const Login = () => {
   const [inputState, setInputState] = useState(initialColorState);
   const [showPassword, setShowPasssword] = useState(false);
+  const dispatch = useDispatch();
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
   const navigation = useNavigation();
   const showPasswordHandle = () => {
     setShowPasssword((previousState) => {
       return !previousState;
     });
+  };
+
+  /**
+   * @description this function is used to handle the text changes in text input
+   * @param {string} fieldname
+   */
+  const handleTextChange = (fieldname, text) => {
+    setLoginData((prevState) => {
+      return {
+        ...prevState,
+        [fieldname]: text,
+      };
+    });
+  };
+
+  /**
+   * @description this function is used to handle the login
+   */
+  const handleLogin = () => {
+    dispatch(
+      login(loginData, (res) => {
+        Toast.show({
+          type: "success",
+          text1: "Login successful",
+        });
+        navigation.navigate("Home")
+      })
+    );
   };
 
   return (
@@ -139,6 +172,7 @@ const Login = () => {
             size={17}
           />
           <TextInput
+            onChangeText={(text) => handleTextChange("email", text)}
             onBlur={() => setInputState(initialColorState)}
             onFocus={() =>
               setInputState((prevState) => ({
@@ -167,6 +201,7 @@ const Login = () => {
             size={17}
           />
           <TextInput
+            onChangeText={(text) => handleTextChange("password", text)}
             secureTextEntry={!showPassword}
             onBlur={() => setInputState(initialColorState)}
             selectionColor={"#FFC300"}
@@ -202,7 +237,7 @@ const Login = () => {
       <Animated.View
         entering={FadeInDown.delay(800).duration(1000).springify()}
       >
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </Animated.View>

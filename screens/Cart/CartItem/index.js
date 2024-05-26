@@ -9,43 +9,27 @@ import {
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { CachedImage } from "../../../utils/cachedImage";
 
-const CartItem = ({ data, _removeCartItem }) => {
-  const [count, setCount] = useState(data?.count || 1);
-
-  /**
-   * @description this function is used to handle counts of food item to store in cart
-   * @params {string} operation
-   */
-  const handleCounts = (operation) => {
-    operation === "inc"
-      ? setCount((prevState) => (prevState >= 5 ? 5 : prevState + 1))
-      : setCount((prevState) => (prevState <= 1 ? 1 : prevState - 1));
-  };
-
-  
-
+const CartItem = ({ data, _removeCartItem, _handleCounts }) => {
   return (
     <View style={styles.cartItemContainer}>
       <View style={styles.firstContainer}>
-        <Image
-          style={styles.image}
-          source={require("../../../assets/images/Noodlessss.jpg")}
-        />
+        <CachedImage uri={"http://192.168.0.107:4000" + data?.image} style={styles.image}/>
       </View>
       <View style={styles.secondContainer}>
         <Text style={styles.cartItemTitle}>{data?.name}</Text>
         <View style={styles.cartItemCount}>
           <Pressable
             style={styles.cartItemCountSign}
-            onPress={() => handleCounts("dec")}
+            onPress={() => _handleCounts("dec", data?._id)}
           >
             <Text style={styles.cartItemCountSignText}>-</Text>
           </Pressable>
-          <Text style={styles.cartItemCountValue}>{count}</Text>
+          <Text style={styles.cartItemCountValue}>{data?.count}</Text>
           <Pressable
             style={styles.cartItemCountSign}
-            onPress={() => handleCounts("inc")}
+            onPress={() => _handleCounts("inc", data?._id)}
           >
             <Text style={styles.cartItemCountSignText}>+</Text>
           </Pressable>
@@ -59,7 +43,7 @@ const CartItem = ({ data, _removeCartItem }) => {
             size={18}
           />
         </TouchableOpacity>
-        <Text style={styles.cartItemPrice}>₹ 40.00</Text>
+        <Text style={styles.cartItemPrice}>₹ {(Math.round(data?.price * 100) / 100).toFixed(2)}</Text>
       </View>
     </View>
   );

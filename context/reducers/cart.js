@@ -1,4 +1,4 @@
-import { ADD_CART_ITEM, REMOVE_CART_ITEM } from "../constants/cart";
+import { ADD_CART_ITEM, REMOVE_CART_ITEM, UPDATE_CART_ITEM } from "../constants/cart";
 
 const initialState = {
   cartItems: [],
@@ -44,6 +44,9 @@ export const cart = (state = initialState, action) => {
       );
       cartItems.splice(index, 1);
       return { ...state, cartItems: [...cartItems] };
+
+    case UPDATE_CART_ITEM:
+      return { ...state, cartItems: [...action.data] };
 
     default:
       return state;
