@@ -11,16 +11,28 @@ import { faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { CachedImage } from "../../../utils/cachedImage";
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import { LinearGradient } from "expo-linear-gradient";
+import { height, width } from "@fortawesome/free-solid-svg-icons/fa0";
+import { APIURL } from "../../../context/constants/api";
+
+const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
 
 const CategoryItem = ({
   item,
   index,
   _updatedSelectedCategory,
   selectedCategory,
-  navigation
+  navigation,
+  isLoading,
 }) => {
   return (
-    <Animated.View entering={SlideInRight.delay(index * 150).duration(300).springify().damping(16)}>
+    <Animated.View
+      entering={SlideInRight.delay(index * 150)
+        .duration(300)
+        .springify()
+        .damping(16)}
+    >
       <TouchableWithoutFeedback
         onPress={() => {
           _updatedSelectedCategory(item?._id);
@@ -57,26 +69,47 @@ const CategoryItem = ({
             }),
           }}
         >
-          <CachedImage
-            uri = {"http://192.168.0.107:4000" + item.image }
-            style={{ width: 50, height: 50 }}
-          />
-          <Text
-            style={{
-              fontSize: 14,
-              color: selectedCategory == item?._id ? "white" : "black",
-              // fontWeight: "bold",
-              fontFamily: "Poppins-Medium",
-              textAlign: "center",
-            }}
+          {isLoading ? (
+            <ShimmerPlaceHolder
+              visible={!isLoading}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 50,
+              }}
+            ></ShimmerPlaceHolder>
+          ) : (
+            <CachedImage
+              uri={APIURL + item.image}
+              style={{ width: 50, height: 50 }}
+            />
+          )}
+
+          <ShimmerPlaceHolder
+            visible={!isLoading}
+            style={{ width: "120%", borderRadius: 5 }}
           >
-            {item?.name}
-          </Text>
-          <FontAwesomeIcon
-            icon={faCircleChevronRight}
-            size={20}
-            color={selectedCategory == item?._id ? "white" : "black"}
-          />
+            <Text
+              style={{
+                fontSize: 14,
+                color: selectedCategory == item?._id ? "white" : "black",
+                fontFamily: "Poppins-Medium",
+                textAlign: "center",
+              }}
+            >
+              {item?.name}
+            </Text>
+          </ShimmerPlaceHolder>
+          <ShimmerPlaceHolder
+            visible={!isLoading}
+            style={{ width: 20, height: 20, borderRadius: 50 }}
+          >
+            <FontAwesomeIcon
+              icon={faCircleChevronRight}
+              size={20}
+              color={selectedCategory == item?._id ? "white" : "black"}
+            />
+          </ShimmerPlaceHolder>
         </View>
       </TouchableWithoutFeedback>
     </Animated.View>

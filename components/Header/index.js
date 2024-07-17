@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-const Header = ({ title }) => {
+const Header = ({ title, showProfile=true }) => {
   const navigation = useNavigation();
   return (
     <View
@@ -16,7 +18,7 @@ const Header = ({ title }) => {
       }}
     >
       <TouchableOpacity
-      onPress={() => {navigation.push("Home")}}
+        onPress={() => { navigation.goBack() }}
         style={{
           width: 40,
           height: 40,
@@ -24,33 +26,30 @@ const Header = ({ title }) => {
           justifyContent: "center",
         }}
       >
-        <Image
-          source={require("../../assets/icons/gg_menu-right.png")}
-          style={{ width: 24, height: 24 }}
-        />
+        <FontAwesomeIcon icon={faArrowLeft} />
       </TouchableOpacity>
       <Text
         style={{
           flex: 1, // Allow text to take remaining space
           fontSize: 18,
-          marginTop: 10,
+          marginTop: 8,
           fontFamily: "Poppins-Medium",
           textAlign: "center", // Center text
         }}
       >
         {title}
       </Text>
-      <View
+      {<View
         style={{
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Image
+        {showProfile ? <Image
           source={require("../../assets/images/actor.jpeg")}
           style={{ width: 40, height: 40, borderRadius: 10 }} // Changed border radius to half the height to make it circular
-        />
-      </View>
+        /> : <View style={{ width: 40, height: 40, borderRadius: 10 }}></View>}
+      </View>}
     </View>
   );
 };

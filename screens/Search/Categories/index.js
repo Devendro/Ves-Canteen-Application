@@ -5,6 +5,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { CachedImage } from "../../../utils/cachedImage";
 import Animated, { FadeInDown, SlideInRight } from "react-native-reanimated";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
+import { APIURL } from "../../../context/constants/api";
 
 const Categories = ({ item, index }) => {
   return (
@@ -12,7 +13,7 @@ const Categories = ({ item, index }) => {
       <View style={styles.categoryCard}>
         <View style={styles.categoryHeading}>
           <CachedImage
-            uri={"http://192.168.0.107:4000" + item?.image}
+            uri={APIURL + item?.image}
             style={{ width: 30, height: 30 }}
           />
           <Text style={styles.searchTitle}>{item?.name}</Text>

@@ -6,11 +6,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import { TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_CART_ITEM } from "../../context/constants/cart";
+import { CachedImage } from "../../utils/cachedImage";
+import { APIURL } from "../../context/constants/api";
 
 const FoodDetail = ({ data, isBottomSheetClose }) => {
   const likeRef = useRef();
   const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
   const [itemCount, setItemCount] = useState(1);
   const [preparationNotes, setPreparationNotes] = useState("");
 
@@ -18,6 +21,7 @@ const FoodDetail = ({ data, isBottomSheetClose }) => {
     if (isBottomSheetClose) {
       setItemCount(1);
       setLiked(false);
+      setAddedToCart(false);
       setPreparationNotes("");
     }
   }, [isBottomSheetClose]);
@@ -49,10 +53,11 @@ const FoodDetail = ({ data, isBottomSheetClose }) => {
    * @params {string} item
    */
   const addItemToCart = (item) => {
+    setAddedToCart(true);
     let cartObj = {
       ...item,
       count: itemCount,
-      notes: preparationNotes
+      notes: preparationNotes,
     };
     dispatch({ type: ADD_CART_ITEM, data: cartObj });
   };
@@ -72,15 +77,17 @@ const FoodDetail = ({ data, isBottomSheetClose }) => {
       >
         <View style={styles.container}>
           <View style={styles.foodImage}>
-            <Image
-              source={require("../../assets/images/Noodlessss.jpg")}
-              style={{
-                alignItems: "center",
-                borderRadius: 20,
-                height: 210,
-                width: "100%",
-              }}
-            />
+            {data?.image && (
+              <CachedImage
+                uri={APIURL + data?.image}
+                style={{
+                  alignItems: "center",
+                  borderRadius: 20,
+                  height: 210,
+                  width: "100%",
+                }}
+              />
+            )}
           </View>
           <View style={styles.foodDetail}>
             <View style={styles.topFoodHeader}>
@@ -160,14 +167,20 @@ const FoodDetail = ({ data, isBottomSheetClose }) => {
             <Text style={styles.cartItemCountSign}>+</Text>
           </Pressable>
         </View>
-        <Pressable
-          style={styles.addToCart}
-          onPress={() => {
-            addItemToCart(data);
-          }}
-        >
-          <Text style={styles.cartText}>Add Item: ₹{data?.price}</Text>
-        </Pressable>
+        {!addedToCart ? (
+          <Pressable
+            style={styles.addToCart}
+            onPress={() => {
+              addItemToCart(data);
+            }}
+          >
+            <Text style={styles.cartText}>Add Item: ₹{data?.price}</Text>
+          </Pressable>
+        ) : (
+          <Pressable style={styles.addToCart}>
+            <Text style={styles.cartText}>Added in Cart</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );

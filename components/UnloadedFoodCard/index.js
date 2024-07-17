@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { CachedImage } from "../../utils/cachedImage";
-import { APIURL } from "../../context/constants/api";
-import { createBottomSheetScrollableComponent } from "@gorhom/bottom-sheet";
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import { LinearGradient } from "expo-linear-gradient";
 
-const FoodCard = ({ data, handleSheetChanges }) => {
+const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
+const UnloadedFoodCard = ({ data, handleSheetChanges }) => {
   return (
     <View
       style={{
@@ -31,25 +31,16 @@ const FoodCard = ({ data, handleSheetChanges }) => {
         marginBottom: 15,
       }}
     >
-      <Pressable
+      <ShimmerPlaceHolder
         style={{
           width: "100%",
+          height: 200,
+          borderTopRightRadius: 20,
+          borderTopLeftRadius: 20,
+          flexDirection: "row",
+          alignItems: "center",
         }}
-        onPress={() => {
-          handleSheetChanges(0);
-        }}
-      >
-        <CachedImage
-          uri={APIURL + data.image}
-          style={{
-            alignItems: "center",
-            height: 200,
-            width: "100%",
-            borderTopRightRadius: 20,
-            borderTopLeftRadius: 20,
-          }}
-        />
-      </Pressable>
+      ></ShimmerPlaceHolder>
       <View
         style={{
           flexDirection: "row",
@@ -62,18 +53,34 @@ const FoodCard = ({ data, handleSheetChanges }) => {
           width: "100%",
         }}
       >
-        <View>
-          <Text
+        <View style={{ gap: 5 }}>
+          <ShimmerPlaceHolder
+            visible={false}
             style={{
-              fontSize: 14,
-              marginTop: 5,
-              marginBottom: 2,
-              fontFamily: "Poppins-Medium",
+              flexDirection: "row",
+              alignItems: "center",
+              borderRadius: 3,
             }}
           >
-            {data?.name}
-          </Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 2,
+                fontFamily: "Poppins-Medium",
+              }}
+            >
+              Any Name
+            </Text>
+          </ShimmerPlaceHolder>
+          <ShimmerPlaceHolder
+            visible={false}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              borderRadius: 3,
+            }}
+          >
             <Text
               style={{
                 color: "#667C8A",
@@ -81,7 +88,7 @@ const FoodCard = ({ data, handleSheetChanges }) => {
                 fontFamily: "Poppins-Medium",
               }}
             >
-              {data?.categoryData?.name}
+              Chinese
             </Text>
             <FontAwesomeIcon
               icon={faCircle}
@@ -98,13 +105,13 @@ const FoodCard = ({ data, handleSheetChanges }) => {
             >
               ₹{data?.price}
             </Text>
-          </View>
+          </ShimmerPlaceHolder>
         </View>
       </View>
     </View>
   );
 };
 
-export default FoodCard;
+export default UnloadedFoodCard;
 
 const styles = StyleSheet.create({});

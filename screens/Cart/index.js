@@ -26,9 +26,11 @@ import {
   updateOrderPaymentStatus,
 } from "../../context/actions/order";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import FloatingButton from "../../components/FloatingButton";
 
 export default function Cart() {
   const cartData = useSelector((state) => state.cart.cartItems);
+  console.log(cartData)
   const [totalPrice, setTotalPrice] = useState(0);
   const [orderPlaced, setOrderPlaced] = useState();
   const [paymentConfirmed, setPaymentConfirmed] = useState();
@@ -78,6 +80,9 @@ export default function Cart() {
     );
   }
 
+  /**
+   * @description this function is used to create and place order and payment
+   */
   const placeOrder = () => {
     Toast.hide();
     setOrderPlaced(false);
@@ -108,7 +113,7 @@ export default function Cart() {
         theme: { color: "#FFC300" },
       };
 
-      RazorpayCheckout.open(options)
+      RazorpayCheckout?.open(options)
         .then((data) => {
           setPaymentConfirmed(false);
           let updatedOrderData = {
@@ -135,6 +140,7 @@ export default function Cart() {
           );
         })
         .catch((data) => {
+          console.log(data)
           Toast.show({
             type: "error",
             text1: "Payment Not Completed",
@@ -278,11 +284,12 @@ export default function Cart() {
       )}
       {orderPlaced !== false && paymentConfirmed !== false && (
         <View style={styles.bottomContainer}>
-          <TouchableOpacity onPress={placeOrder} style={styles.orderButton}>
+          <TouchableOpacity onPress={placeOrder} style={styles.orderButton} disabled={!cartData || cartData.length == 0}>
             <Text style={styles.buttonText}>Place Order</Text>
           </TouchableOpacity>
         </View>
       )}
+      {/* <FloatingButton/> */}
       <Toast />
     </View>
   );

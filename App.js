@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { StyleSheet, Dimensions } from "react-native";
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -19,6 +18,8 @@ import Search from "./screens/Search";
 import Foods from "./screens/Foods";
 import Toast from "react-native-toast-message";
 import { FooterMenu } from "./screens/FooterMenu";
+import Orders from "./screens/Orders";
+import SettingMenu from "./screens/SettingMenu";
 
 const Stack = createNativeStackNavigator();
 
@@ -62,8 +63,9 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <NavigationContainer>
+            
             <Stack.Navigator
-              initialRouteName={showOnboarding ? "Onboarding" : "Cart"}
+              initialRouteName={showOnboarding ? "Onboarding" : "Home"}
               screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="Splash" component={Splash} />
@@ -86,6 +88,8 @@ export default function App() {
                 options={{ animation: "slide_from_bottom" }}
               />
               <Stack.Screen name="Foods" component={Foods} />
+              <Stack.Screen name="Orders" component={Orders} />
+              <Stack.Screen name="SettingMenu" component={SettingMenu} options={{ animation: "slide_from_right" }}/>
             </Stack.Navigator>
           </NavigationContainer>
           <Toast />
@@ -95,15 +99,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const HEIGHT = Dimensions.get("window").height;
-const WIDTH = Dimensions.get("window").width;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white", // Ensure SafeAreaView has a background color
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

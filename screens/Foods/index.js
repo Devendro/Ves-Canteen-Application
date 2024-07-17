@@ -31,7 +31,7 @@ const Foods = ({ route }) => {
   const dispatch = useDispatch();
   const bottomSheetRef = useRef();
   const snapPoints = useMemo(() => ["85%"], []);
-  const [isBottomSheetClose, setIsBottomSheetClose] = useState(false)
+  const [isBottomSheetClose, setIsBottomSheetClose] = useState(false);
   const [filters, setFilters] = useState({
     veg: false,
     nonveg: false,
@@ -40,6 +40,7 @@ const Foods = ({ route }) => {
   const [foods, setFoods] = useState();
   const [sortBy, setSortBy] = useState();
   const [foodDetail, setFoodDetail] = useState();
+
 
   /**
    * @description useEffect to call functions on initial screen load
@@ -54,7 +55,7 @@ const Foods = ({ route }) => {
   const getAllFoods = () => {
     dispatch(
       getFoods(
-        { keyword: route?.params?.keyword ? route.params.keyword : "Idli" },
+        { keyword: route?.params?.keyword ? route.params.keyword : "" },
         (res) => {
           setFoods(res);
         }
@@ -80,7 +81,7 @@ const Foods = ({ route }) => {
    * @param {number} index
    */
   const handleSheetChanges = useCallback((index, data) => {
-    index == 0 ? setIsBottomSheetClose(false) : setIsBottomSheetClose(true)
+    index == 0 ? setIsBottomSheetClose(false) : setIsBottomSheetClose(true);
     bottomSheetRef.current?.snapToIndex(index);
   }, []);
 
@@ -181,7 +182,7 @@ const Foods = ({ route }) => {
           <FoodCard
             data={item}
             handleSheetChanges={(index, data) => {
-              setFoodDetail(data)
+              setFoodDetail(item);
               handleSheetChanges(index, data);
             }}
           />
@@ -195,7 +196,7 @@ const Foods = ({ route }) => {
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
         backgroundStyle={{
-          backgroundColor: "#f2f2f2"
+          backgroundColor: "#f2f2f2",
         }}
       >
         <BottomSheetView
@@ -203,7 +204,10 @@ const Foods = ({ route }) => {
             <View style={[style, { backgroundColor: "rgba(0, 0, 0, 0.5)" }]} />
           )}
         >
-          <FoodDetail isBottomSheetClose={isBottomSheetClose} data={foodDetail}/>
+          <FoodDetail
+            isBottomSheetClose={isBottomSheetClose}
+            data={foodDetail}
+          />
         </BottomSheetView>
       </BottomSheet>
     </View>

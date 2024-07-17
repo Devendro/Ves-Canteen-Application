@@ -10,12 +10,13 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { CachedImage } from "../../../utils/cachedImage";
+import { APIURL } from "../../../context/constants/api";
 
 const CartItem = ({ data, _removeCartItem, _handleCounts }) => {
   return (
     <View style={styles.cartItemContainer}>
       <View style={styles.firstContainer}>
-        <CachedImage uri={"http://192.168.0.107:4000" + data?.image} style={styles.image}/>
+        <CachedImage uri={APIURL + data?.image} style={styles.image}/>
       </View>
       <View style={styles.secondContainer}>
         <Text style={styles.cartItemTitle}>{data?.name}</Text>

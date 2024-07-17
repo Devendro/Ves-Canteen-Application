@@ -55,7 +55,17 @@ const Search = () => {
     return () => clearTimeout(getData);
   }, [searchKeyword]);
 
-  // function to handle click on recent search
+  // function to handle click on search result
+  const handlePartialSearchClick = (keyowrd) => {
+    let updatedRecentSearches;
+
+    // updatedRecentSearches = recentSearchedData.slice(1).concat(data);
+
+    // // Dispatch an action with the updated data
+    // dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
+
+    navigation.navigate("Foods", { keyword: keyowrd });
+  };
 
   // function to handle click on search result
   const handleSearchedResultClick = (data) => {
@@ -150,7 +160,12 @@ const Search = () => {
         {/* To Show Search Result Coming from server */}
         {searchKeyword && (
           <View style={styles.recentSearch}>
-            <RecentSearch title={searchKeyword} />
+            <RecentSearch
+              title={searchKeyword}
+              handleSearchedResultClick={() => {
+                handlePartialSearchClick(searchKeyword);
+              }}
+            />
             <FlatList
               keyboardShouldPersistTaps="always"
               data={searchResults}

@@ -12,6 +12,8 @@ import {
   ScrollView,
   FlatList,
   StatusBar,
+  RefreshControl,
+  Pressable
 } from "react-native";
 import CategoryItem from "./CategoryItem";
 import { useNavigation } from "@react-navigation/native";
@@ -24,18 +26,38 @@ import { useDispatch } from "react-redux";
 import { getCategories } from "../../context/actions/category";
 import SearchBar from "../../components/SearchBar";
 import FoodCard from "../../components/FoodCard";
+import UnloadedFoodCard from "../../components/UnloadedFoodCard";
+import { getFoods } from "../../context/actions/food";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { FLOATING_BUTTON } from "../../context/constants/food";
+import FloatingButton from "../../components/FloatingButton";
 
 export default function Home() {
   const dispatch = useDispatch();
   const bottomSheetRef = useRef();
   const navigation = useNavigation();
   const [categoryData, setCategoryData] = useState({});
+  const [foods, setFoods] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
+  const [isFoodLoading, setIsFoodLoading] = useState(false);
+  const [isBottomSheetClose, setIsBottomSheetClose] = useState(false);
+  const [foodDetail, setFoodDetail] = useState({});
   const snapPoints = useMemo(() => ["85%"], []);
   useEffect(() => {
+    setIsCategoryLoading(true);
+    setIsFoodLoading(true);
     dispatch(
       getCategories({}, (response) => {
         setCategoryData(response);
+        setIsCategoryLoading(false);
+      })
+    );
+
+    dispatch(
+      getFoods({}, (response) => {
+        setFoods(response);
+        setIsFoodLoading(false);
       })
     );
   }, []);
@@ -45,6 +67,10 @@ export default function Home() {
   };
 
   const handleSheetChanges = useCallback((index) => {
+    index == 0 ? setIsBottomSheetClose(false) : setIsBottomSheetClose(true);
+    index == 0
+      ? dispatch({ type: FLOATING_BUTTON, data: false })
+      : dispatch({ type: FLOATING_BUTTON, data: true });
     bottomSheetRef.current?.snapToIndex(index);
   }, []);
 
@@ -59,6 +85,25 @@ export default function Home() {
     []
   );
 
+  const getFoodByCategory = (category) => {
+    setIsFoodLoading(true);
+    dispatch(
+      getFoods({ category: category }, (response) => {
+        setFoods(response);
+        setIsFoodLoading(false);
+      })
+    );
+  };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
     <View
       style={{
@@ -68,7 +113,9 @@ export default function Home() {
       }}
     >
       <StatusBar barStyle="dark-content" />
-      <ScrollView stickyHeaderIndices={[3]}>
+      <ScrollView stickyHeaderIndices={[3]} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <View
           style={{
             flexDirection: "row",
@@ -105,7 +152,7 @@ export default function Home() {
               VESIT
             </Text>
           </View>
-          <View
+          <Pressable
             style={{
               width: 50,
               height: 50,
@@ -113,12 +160,15 @@ export default function Home() {
               justifyContent: "center",
               alignItems: "center",
             }}
+            onPress={() => {
+              navigation.navigate("SettingMenu");
+            }}
           >
             <Image
               source={require("../../assets/images/actor.jpeg")}
               style={{ width: 40, height: 40, borderRadius: 10 }}
             />
-          </View>
+          </Pressable>
         </View>
 
         <Text
@@ -144,7 +194,7 @@ export default function Home() {
         </Text>
 
         <View style={{ backgroundColor: "#fff", paddingBottom: 8 }}>
-        <SearchBar/>
+          <SearchBar />
         </View>
 
         <FlatList
@@ -157,9 +207,11 @@ export default function Home() {
               index={index}
               _updatedSelectedCategory={(id) => {
                 updatedSelectedCategory(id);
+                getFoodByCategory(id);
               }}
               selectedCategory={selectedCategory}
               navigation={navigation}
+              isLoading={isCategoryLoading}
             />
           )}
         />
@@ -174,19 +226,42 @@ export default function Home() {
           <Text style={{ fontFamily: "Poppins-SemiBold", fontSize: 18 }}>
             Popular
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Foods");
+            }}
+            style={{ flexDirection: "row", alignItems: "center" }}
+          >
             <Text style={{ fontFamily: "Poppins-Medium" }}>
               View All <Text style={{ fontSize: 16 }}>{">"}</Text>{" "}
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
-        <FoodCard
-          handleSheetChanges={(index) => {
-            handleSheetChanges(index);
-          }}
-        />
+        {foods &&
+          foods?.docs?.map((item, key) => {
+            return (
+              <FoodCard
+                data={item}
+                key={item?._id}
+                handleSheetChanges={(index) => {
+                  setFoodDetail(item);
+                  handleSheetChanges(index);
+                }}
+              />
+            );
+          })}
+        {isFoodLoading && (
+          <View>
+            <UnloadedFoodCard />
+            <UnloadedFoodCard />
+            <UnloadedFoodCard />
+            <UnloadedFoodCard />
+            <UnloadedFoodCard />
+          </View>
+        )}
       </ScrollView>
+      <FloatingButton />
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
@@ -194,13 +269,20 @@ export default function Home() {
         backdropComponent={renderBackdrop}
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
+        backgroundStyle={{
+          backgroundColor: "#f2f2f2",
+        }}
+      // onClose={()=>{setFoodDetail({})}}
       >
         <BottomSheetView
           backdropComponent={({ style }) => (
             <View style={[style, { backgroundColor: "rgba(0, 0, 0, 0.5)" }]} />
           )}
         >
-          <FoodDetail />
+          <FoodDetail
+            isBottomSheetClose={isBottomSheetClose}
+            data={foodDetail}
+          />
         </BottomSheetView>
       </BottomSheet>
     </View>
