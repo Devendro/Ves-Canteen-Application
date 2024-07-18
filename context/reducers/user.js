@@ -22,6 +22,8 @@ const initialState = {
           loggedIn: true,
           ...action.data,
         };
+      case "LOGOUT":
+        return initialState;
       case "OTP":
         return { ...state, ...{ otp_in: true }, ...action.data };
       case "OPERATOR_LIST":

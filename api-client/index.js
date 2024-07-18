@@ -12,22 +12,22 @@ var config = {
   },
 };
 
-const getIpAddress = async () => {
-  try {
-    const response = await axios.get("https://api.ipify.org?format=json");
-    const data = await response.data;
-    return data.ip;
-  } catch (error) {
-    console.error("Error getting IP address:", error);
-    return null;
-  }
-};
+// const getIpAddress = async () => {
+//   try {
+//     const response = await axios.get("https://api.ipify.org?format=json");
+//     const data = await response.data;
+//     return data.ip;
+//   } catch (error) {
+//     console.error("Error getting IP address:", error);
+//     return null;
+//   }
+// };
 
-var ipAddress = "";
+// var ipAddress = "";
 
-getIpAddress().then((ip) => {
-  ipAddress = ip;
-});
+// getIpAddress().then((ip) => {
+//   ipAddress = ip;
+// });
 
 var logoutErrFlag = false;
 var langHeaders = () => {
@@ -35,7 +35,7 @@ var langHeaders = () => {
     headers: {
       ...config.headers,
       lang: "en",
-      ipAddress: ipAddress,
+      // ipAddress: ipAddress,
     },
   };
 };

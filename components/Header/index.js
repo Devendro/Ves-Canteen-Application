@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Pressable } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
-const Header = ({ title, showProfile=true }) => {
+const Header = ({ title, showProfile = true }) => {
+  const userDetail = useSelector((state) => state?.user)
   const navigation = useNavigation();
   return (
     <View
@@ -39,17 +41,39 @@ const Header = ({ title, showProfile=true }) => {
       >
         {title}
       </Text>
-      {<View
+      {showProfile ? <Pressable
         style={{
+          width: 50,
+          height: 50,
+          borderRadius: 50,
           justifyContent: "center",
           alignItems: "center",
         }}
+        onPress={() => {
+          navigation.navigate("SettingMenu");
+        }}
       >
-        {showProfile ? <Image
-          source={require("../../assets/images/actor.jpeg")}
-          style={{ width: 40, height: 40, borderRadius: 10 }} // Changed border radius to half the height to make it circular
-        /> : <View style={{ width: 40, height: 40, borderRadius: 10 }}></View>}
-      </View>}
+        <View
+          style={{
+            height: 40,
+            width: 40,
+            borderRadius: 40,
+            backgroundColor: "rgba(255, 195, 0, 0.2)",
+            textAlign: "center",
+            alignItems: "center",
+            justifyContent: 'center'
+          }}>
+          <Text style={{
+            color: "#FFC300",
+            fontFamily: "Poppins-SemiBold",
+            fontSize: 20,
+            marginTop: 4
+          }}>{userDetail?.name?.charAt(0)}</Text>
+        </View> 
+      </Pressable> : <View style={{
+          width: 50,
+          height: 50,
+        }}></View>}
     </View>
   );
 };

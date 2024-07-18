@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { APIURL } from "../../../context/constants/api";
+import { useNavigation } from "@react-navigation/native";
 
 const OrderCard = ({ foodData }) => {
+  const navigation = useNavigation();
   function formatDate(dateString) {
     const date = new Date(dateString);
     const optionsDate = { year: "numeric", month: "long", day: "numeric" };
@@ -73,6 +75,15 @@ const OrderCard = ({ foodData }) => {
                   </Text>
                 </View>
               </View>
+              <View style={styles.buttons}>
+                <Pressable style={[{ ...styles.button, borderColor: "#2E8B57", borderWidth: 1 }]} onPress={() => { navigation.navigate("Review", { data: order?.foodDetails, orderId: order?._id }) }}>
+                  <Text style={{ ...styles.buttonText, color: "#2E8B57" }}>Rating</Text>
+                </Pressable>
+                <Pressable style={[{ ...styles.button, borderColor: "#D22B2B", borderWidth: 1 }]}>
+                  <Text style={{ ...styles.buttonText, color: "#D22B2B" }}>Re-order</Text>
+                </Pressable>
+              </View>
+
             </View>
           );
         })}
@@ -144,4 +155,19 @@ const styles = StyleSheet.create({
     color: "#999999",
     fontSize: 12,
   },
+  buttons: {
+    marginTop: 5,
+    flexDirection: "row",
+    justifyContent: "space-between", // Ensures there is a small gap between the buttons
+    gap: 5
+  },
+  button: {
+    flex: 1, // Ensures buttons spread equally within the parent view
+    alignItems: "center",
+    borderRadius: 5,
+    padding: 5
+  },
+  buttonText: {
+    fontFamily: "Poppins-Regular",
+  }
 });

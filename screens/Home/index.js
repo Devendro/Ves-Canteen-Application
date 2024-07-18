@@ -13,7 +13,8 @@ import {
   FlatList,
   StatusBar,
   RefreshControl,
-  Pressable
+  Pressable,
+  ActivityIndicator
 } from "react-native";
 import CategoryItem from "./CategoryItem";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +23,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import FoodDetail from "../FoodDetail";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getCategories } from "../../context/actions/category";
 import SearchBar from "../../components/SearchBar";
 import FoodCard from "../../components/FoodCard";
@@ -31,6 +32,7 @@ import { getFoods } from "../../context/actions/food";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FLOATING_BUTTON } from "../../context/constants/food";
 import FloatingButton from "../../components/FloatingButton";
+import Animated from "react-native-reanimated";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -43,7 +45,9 @@ export default function Home() {
   const [isFoodLoading, setIsFoodLoading] = useState(false);
   const [isBottomSheetClose, setIsBottomSheetClose] = useState(false);
   const [foodDetail, setFoodDetail] = useState({});
+  const [loading, setLoading] = useState(false);
   const snapPoints = useMemo(() => ["85%"], []);
+  const userDetail = useSelector((state) => state?.user)
   useEffect(() => {
     setIsCategoryLoading(true);
     setIsFoodLoading(true);
@@ -63,7 +67,19 @@ export default function Home() {
   }, []);
 
   const updatedSelectedCategory = (categoryId) => {
-    setSelectedCategory(categoryId);
+    if (selectedCategory == categoryId) {
+      setLoading(true)
+      setSelectedCategory("")
+      dispatch(
+        getFoods({}, (response) => {
+          setFoods(response);
+          setIsFoodLoading(false);
+          setLoading(false)
+        })
+      );
+    } else {
+      setSelectedCategory(categoryId);
+    }
   };
 
   const handleSheetChanges = useCallback((index) => {
@@ -86,11 +102,13 @@ export default function Home() {
   );
 
   const getFoodByCategory = (category) => {
+    setLoading(true)
     setIsFoodLoading(true);
     dispatch(
       getFoods({ category: category }, (response) => {
         setFoods(response);
         setIsFoodLoading(false);
+        setLoading(false);
       })
     );
   };
@@ -121,7 +139,7 @@ export default function Home() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-around",
-            paddingHorizontal: 10,
+            paddingHorizontal: 5,
             marginTop: 2,
           }}
         >
@@ -164,10 +182,27 @@ export default function Home() {
               navigation.navigate("SettingMenu");
             }}
           >
-            <Image
+            <View
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 40,
+                backgroundColor: "rgba(255, 195, 0, 0.2)",
+                textAlign: "center",
+                alignItems: "center",
+                justifyContent: 'center'
+              }}>
+              <Text style={{
+                color: "#FFC300",
+                fontFamily: "Poppins-SemiBold",
+                fontSize: 20,
+                marginTop: 4
+              }}>{userDetail?.name?.charAt(0)}</Text>
+            </View>
+            {/* <Image
               source={require("../../assets/images/actor.jpeg")}
               style={{ width: 40, height: 40, borderRadius: 10 }}
-            />
+            /> */}
           </Pressable>
         </View>
 
@@ -206,8 +241,8 @@ export default function Home() {
               item={item}
               index={index}
               _updatedSelectedCategory={(id) => {
+                if (selectedCategory !== id) { getFoodByCategory(id) };
                 updatedSelectedCategory(id);
-                getFoodByCategory(id);
               }}
               selectedCategory={selectedCategory}
               navigation={navigation}
@@ -228,7 +263,7 @@ export default function Home() {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Foods");
+              navigation.navigate("Foods", {category: selectedCategory});
             }}
             style={{ flexDirection: "row", alignItems: "center" }}
           >
@@ -237,7 +272,7 @@ export default function Home() {
             </Text>
           </TouchableOpacity>
         </View>
-
+        {loading && <ActivityIndicator size={"large"} />}
         {foods &&
           foods?.docs?.map((item, key) => {
             return (

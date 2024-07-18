@@ -26,7 +26,6 @@ const RecentSearch = ({
     if (!keyword || keyword === "") {
       setTitleBold(sentence);
     } else {
-      console.log(sentence?.toLowerCase().startsWith(keyword?.toLowerCase()));
       if (!sentence?.toLowerCase().startsWith(keyword?.toLowerCase())) {
         setTitleBold(sentence);
       } else {

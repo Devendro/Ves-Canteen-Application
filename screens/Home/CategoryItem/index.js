@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Image,
+  Pressable,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -104,11 +105,12 @@ const CategoryItem = ({
             visible={!isLoading}
             style={{ width: 20, height: 20, borderRadius: 50 }}
           >
-            <FontAwesomeIcon
-              icon={faCircleChevronRight}
-              size={20}
-              color={selectedCategory == item?._id ? "white" : "black"}
-            />
+            <Pressable onPress={() => { navigation.navigate("Foods", { category: item?._id }) }}>
+              <FontAwesomeIcon
+                icon={faCircleChevronRight}
+                size={20}
+                color={selectedCategory == item?._id ? "white" : "black"}
+              /></Pressable>
           </ShimmerPlaceHolder>
         </View>
       </TouchableWithoutFeedback>

@@ -1,14 +1,18 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, StatusBar } from 'react-native'
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faArrowLeft, faCartArrowDown, faChevronRight, faCircle, faCircleExclamation, faCircleInfo, faComment, faHeart, faIndianRupeeSign, faKey, faPowerOff, faRupee } from '@fortawesome/free-solid-svg-icons'
-import { useSelector } from 'react-redux'
+import { faArrowLeft, faCartArrowDown, faChevronRight, faCircle, faCircleExclamation, faCircleInfo, faComment, faHeart, faIndianRupeeSign, faKey, faPowerOff, faRupee, faStar } from '@fortawesome/free-solid-svg-icons'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import Header from '../../components/Header'
+import { LOGOUT } from '../../context/constants/user'
+import Animated from 'react-native-reanimated'
 
 const SettingMenu = () => {
   const userDetail = useSelector((state) => state?.user)
+
   const navigation = useNavigation()
+  const dispatch = useDispatch()
 
   /**
    * @description this function is used to navigate on speific screens
@@ -17,23 +21,28 @@ const SettingMenu = () => {
   const navigateTo = (path) => {
     navigation.navigate(path);
   }
+
+  const handleLogout = () => {
+    dispatch({type: LOGOUT, data: {}})
+  }
   return (
     <View >
-      <Header title={"Account"} showProfile={false}/>
+      <StatusBar barStyle="dark-content" />
+      <Header title={"Account"} showProfile={false} />
       <View style={styles.container}>
-        {userDetail && userDetail?.loggedIn && <View style={styles.profileCard}>
+        {userDetail && userDetail?.loggedIn && <Pressable onPress={() => { navigateTo("Profile") }} style={styles.profileCard}>
           <View style={styles.profileImage}>
             <Text style={styles.profileImageText}>{userDetail?.name?.charAt(0)}</Text>
           </View>
           <View style={styles.profileDetail}>
             <Text style={styles.username}>{userDetail?.name}</Text>
             <Text style={styles.email}>{userDetail?.email}</Text>
-            <Pressable >
+            <View>
               <Text style={styles.profileView}>View Profile {">"}</Text>
-            </Pressable>
+            </View>
           </View>
-        </View>}
-        {(!userDetail || !userDetail?.loggedIn) && <View style={styles.profileCard}>
+        </Pressable>}
+        {(!userDetail || !userDetail?.loggedIn) && <Pressable onPress={() => { navigateTo("Login") }} style={styles.profileCard}>
           <View style={styles.profileDetail}>
             <Text style={styles.username}>Not Logged In</Text>
             <Text style={styles.email}>Please login to Continue</Text>
@@ -41,7 +50,7 @@ const SettingMenu = () => {
               <Text style={styles.profileView}>login here {">"}</Text>
             </Pressable>
           </View>
-        </View>}
+        </Pressable>}
         <View style={styles.orderSection}>
           <Pressable style={styles.ordersOption}>
             <FontAwesomeIcon icon={faHeart} color="#51636E" style={styles.ordersOptionIcon} size={18} />
@@ -60,9 +69,9 @@ const SettingMenu = () => {
           </Pressable>
           <View style={{ borderWidth: 0.2, borderColor: "#DADADA", left: 40, width: "90.7%" }}></View>
           <Pressable style={styles.ordersOption}>
-            <FontAwesomeIcon icon={faIndianRupeeSign} color="#51636E" style={styles.ordersOptionIcon} size={18} />
+            <FontAwesomeIcon icon={faStar} color="#51636E" style={styles.ordersOptionIcon} size={18} />
             <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
-              <Text style={styles.ordersOptionText}>Your Payments</Text>
+              <Text style={styles.ordersOptionText}>Your Reviews</Text>
               <FontAwesomeIcon icon={faChevronRight} color="#51636E" style={{ marginEnd: 20 }} />
             </View>
           </Pressable>
@@ -92,13 +101,19 @@ const SettingMenu = () => {
             </View>
           </Pressable>
           <View style={{ borderWidth: 0.2, borderColor: "#DADADA", left: 40, width: "90.7%" }}></View>
-          <Pressable style={styles.ordersOption}>
+          {userDetail && userDetail?.loggedIn ? <Pressable style={styles.ordersOption} onPress={() => { handleLogout() }}>
             <FontAwesomeIcon icon={faPowerOff} color="#51636E" style={styles.ordersOptionIcon} size={18} />
             <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
-              <Text style={styles.ordersOptionText}>{userDetail && userDetail?.loggedIn ? "Logout" : "Login"}</Text>
+              <Text style={styles.ordersOptionText}>Logout</Text>
               <FontAwesomeIcon icon={faChevronRight} color="#51636E" style={{ marginEnd: 20 }} />
             </View>
-          </Pressable>
+          </Pressable> : <Pressable style={styles.ordersOption} onPress={() => {navigation.navigate("Login")}} >
+            <FontAwesomeIcon icon={faPowerOff} color="#51636E" style={styles.ordersOptionIcon} size={18} />
+            <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
+              <Text style={styles.ordersOptionText}>Login</Text>
+              <FontAwesomeIcon icon={faChevronRight} color="#51636E" style={{ marginEnd: 20 }} />
+            </View>
+          </Pressable>}
         </View>
       </View>
     </View>

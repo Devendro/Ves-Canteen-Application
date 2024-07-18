@@ -22,6 +22,7 @@ if (Platform.OS === "android") {
 }
 
 function handleRegistrationError(errorMessage) {
+  console.error("Push Notification Error:", errorMessage);
   alert(errorMessage);
   throw new Error(errorMessage);
 }
@@ -52,10 +53,9 @@ async function registerForPushNotificationsAsync() {
       const pushTokenString = (
         await Notifications.getExpoPushTokenAsync({ projectId })
       ).data;
-      console.log(pushTokenString);
       return pushTokenString;
     } catch (e) {
-      handleRegistrationError(`${e}`);
+      handleRegistrationError(`Network request failed: ${e.message}`);
     }
   } else {
     handleRegistrationError("Must use physical device for push notifications");
@@ -64,7 +64,7 @@ async function registerForPushNotificationsAsync() {
 
 async function PushNotification() {
   const expoPushToken = await registerForPushNotificationsAsync();
-  return expoPushToken ?? "";
+  return expoPushToken;
 }
 
 export default PushNotification;

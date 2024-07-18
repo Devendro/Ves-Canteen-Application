@@ -17,9 +17,11 @@ import PushNotification from "./PushNotification";
 import Search from "./screens/Search";
 import Foods from "./screens/Foods";
 import Toast from "react-native-toast-message";
-import { FooterMenu } from "./screens/FooterMenu";
 import Orders from "./screens/Orders";
 import SettingMenu from "./screens/SettingMenu";
+import Profile from "./screens/Profile";
+import { Review } from "./screens/Review";
+import { socket, backendSocket, SocketContext } from "./context/actions/socket";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,8 +29,8 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(null);
   useEffect(() => {
     checkIfAlreadyOnboarded();
-    PushNotification();
   }, []);
+
 
   const checkIfAlreadyOnboarded = async () => {
     let onboarded = await getItem("onboarded");
@@ -45,11 +47,6 @@ export default function App() {
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-    }
-  }, [fontsLoaded, fontError]);
-
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -62,36 +59,39 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <NavigationContainer>
-            
-            <Stack.Navigator
-              initialRouteName={showOnboarding ? "Onboarding" : "Home"}
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen name="Splash" component={Splash} />
-              <Stack.Screen name="Onboarding" component={Onboarding} />
-              <Stack.Screen
-                name="Login"
-                component={Login}
-                options={{ animation: "slide_from_right" }}
-              />
-              <Stack.Screen
-                name="Register"
-                component={Register}
-                options={{ animation: "slide_from_right" }}
-              />
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Cart" component={Cart} />
-              <Stack.Screen
-                name="Search"
-                component={Search}
-                options={{ animation: "slide_from_bottom" }}
-              />
-              <Stack.Screen name="Foods" component={Foods} />
-              <Stack.Screen name="Orders" component={Orders} />
-              <Stack.Screen name="SettingMenu" component={SettingMenu} options={{ animation: "slide_from_right" }}/>
-            </Stack.Navigator>
-          </NavigationContainer>
+          <SocketContext.Provider value={{ socket, backendSocket }}>
+            <NavigationContainer>
+              <Stack.Navigator
+                initialRouteName={showOnboarding ? "Onboarding" : "Home"}
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen name="Splash" component={Splash} />
+                <Stack.Screen name="Onboarding" component={Onboarding} />
+                <Stack.Screen
+                  name="Login"
+                  component={Login}
+                  options={{ animation: "slide_from_right" }}
+                />
+                <Stack.Screen
+                  name="Register"
+                  component={Register}
+                  options={{ animation: "slide_from_right" }}
+                />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Cart" component={Cart} />
+                <Stack.Screen
+                  name="Search"
+                  component={Search}
+                  options={{ animation: "slide_from_bottom" }}
+                />
+                <Stack.Screen name="Foods" component={Foods} />
+                <Stack.Screen name="Orders" component={Orders} />
+                <Stack.Screen name="SettingMenu" component={SettingMenu} options={{ animation: "slide_from_right" }} />
+                <Stack.Screen name="Profile" component={Profile} options={{ animation: "slide_from_bottom" }} />
+                <Stack.Screen name="Review" component={Review} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </SocketContext.Provider>
           <Toast />
           {/* <FooterMenu/> */}
         </GestureHandlerRootView>

@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { login } from "../../context/actions/user";
 import Toast from "react-native-toast-message";
+import PushNotification from "../../PushNotification";
 
 const screenWidth = Dimensions.get("window").width;
 const initialColorState = {
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Login = () => {
+const Login = ({route}) => {
   const [inputState, setInputState] = useState(initialColorState);
   const [showPassword, setShowPasssword] = useState(false);
   const dispatch = useDispatch();
@@ -143,14 +144,15 @@ const Login = () => {
   /**
    * @description this function is used to handle the login
    */
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    let notificationToken = await PushNotification();
     dispatch(
-      login(loginData, (res) => {
+      login({...loginData,notificationToken: notificationToken }, (res) => {
         Toast.show({
           type: "success",
           text1: "Login successful",
         });
-        navigation.navigate("Home")
+        route?.params?.lastPage ? navigation.navigate(route?.params?.lastPage) : navigation.navigate("Home")
       })
     );
   };

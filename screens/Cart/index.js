@@ -26,14 +26,15 @@ import {
   updateOrderPaymentStatus,
 } from "../../context/actions/order";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import FloatingButton from "../../components/FloatingButton";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Cart() {
   const cartData = useSelector((state) => state.cart.cartItems);
-  console.log(cartData)
+  const userDetails = useSelector((state)=> state?.user)
   const [totalPrice, setTotalPrice] = useState(0);
   const [orderPlaced, setOrderPlaced] = useState();
   const [paymentConfirmed, setPaymentConfirmed] = useState();
+  const navigation = useNavigation()
   const dispatch = useDispatch();
 
   /**
@@ -84,6 +85,10 @@ export default function Cart() {
    * @description this function is used to create and place order and payment
    */
   const placeOrder = () => {
+    if (!userDetails?.loggedIn) {
+      navigation.navigate("Login", {lastPage: "Cart"})
+      return
+    }
     Toast.hide();
     setOrderPlaced(false);
 
@@ -140,7 +145,6 @@ export default function Cart() {
           );
         })
         .catch((data) => {
-          console.log(data)
           Toast.show({
             type: "error",
             text1: "Payment Not Completed",

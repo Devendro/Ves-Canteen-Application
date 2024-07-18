@@ -1,192 +1,139 @@
-import React from "react";
-import { Text, View, Image } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { Text, View, Image, StyleSheet, StatusBar, Pressable } from "react-native";
+import Header from "../../components/Header";
+import { AirbnbRating } from "react-native-ratings";
+import { TextInput } from "react-native-gesture-handler";
+import { APIURL } from "../../context/constants/api";
+import { CachedImage } from "../../utils/cachedImage";
+import { useDispatch } from "react-redux";
+import { createRating } from "../../context/actions/rating";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
-export function Review() {
+export function Review({ route }) {
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
+  const [reviewData, setReviewData] = useState({
+    food: route?.params?.data?._id,
+    orderId: route?.params?.orderId,
+    rating: 0,
+    comment: ""
+  })
+  const handleReviewText = (text) => {
+    setReviewData((prevState) => {
+      return {
+        ...prevState,
+        comment: text
+      }
+    })
+  }
+  const submitReview = () => {
+    dispatch(createRating(reviewData, (res) => {
+      if (res) {
+        Toast.show({
+          type: "success",
+          text1: "Review Submitted",
+        });
+        navigation.goBack();
+      }
+    }))
+  }
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#FFC300",
-        alignItems: "center",
-        paddingTop: 70,
-        width: "100%"
-      }}
-    >
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: 24,
-          fontWeight: "bold",
-          fontFamily: "Poppins-Light",
-        }}
-      >
-        Rate Our Service
-      </Text>
-      <Text
-        style={{
-          color: "#483C3C",
-          fontSize: 30,
-          fontWeight: "bold",
-          fontFamily: "Poppins-Light",
-          marginTop: 40,
-        }}
-      >
-        How was
-      </Text>
-      <Text>
-        <Text
-          style={{
-            color: "#483C3C",
-            fontSize: 30,
-            fontWeight: "bold",
-            fontFamily: "Poppins-Light",
-          }}
-        >
-          your{" "}
-        </Text>
-        <Text
-          style={{
-            color: "#fff",
-            fontSize: 30,
-            fontWeight: "bold",
-            fontFamily: "Poppins-Light",
-          }}
-        >
-          food?
-        </Text>
-      </Text>
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginTop: 2}}
-      >
-        <View
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-            transform: [{ scaleX: -1 }],
-          }}
-        >
-          <FontAwesomeIcon icon={faThumbsDown} color="red" size={22} />
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <Header title={"Rating"} />
+      <View style={styles.ratingSection}>
+        <CachedImage
+          uri={APIURL + route?.params?.data?.image}
+          style={styles.image}
+        />
+        <Text style={styles.foodName}>{route?.params?.data?.name}</Text>
+        <View>
+          <AirbnbRating showRating={false} size={25} defaultRating={0} onFinishRating={(e) => {
+            setReviewData((prevState) => {
+              return {
+                ...prevState,
+                rating: e
+              }
+            })
+          }} />
         </View>
-        <View
-          style={{
-            width: 150,
-            height: 150,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-            marginHorizontal: 20,
+        <TextInput
+          onChangeText={(text) => {
+            handleReviewText(text);
           }}
-        >
-          <Image
-            source={require("../../assets/images/Samosa.png")} // Replace with your image path
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        </View>
-
-        <View
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-          }}
-        >
-          {/* <Image
-            source={require("../../assets/images/like.png")} // Replace with your image path
-            style={{ width: 30, height: 30, borderRadius: 50, }}
-          /> */}
-          <FontAwesomeIcon icon={faThumbsUp} color="green" size={22} />
-        </View>
+          style={styles.textInput}
+          placeholder={`Please write a review for ${route?.params?.data?.name}`}
+        />
       </View>
 
-      <Text
-        style={{
-          color: "#483C3C",
-          fontSize: 30,
-          fontWeight: "bold",
-          fontFamily: "Poppins-Light",
-          marginTop: 60,
-        }}
-      >
-        How was your
-      </Text>
-
-      <Text
-        style={{
-          color: "#fff",
-          fontSize: 30,
-          fontWeight: "bold",
-          fontFamily: "Poppins-Light",
-        }}
-      >
-        experience?
-      </Text>
-
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}
-      >
-        <View
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-            transform: [{ scaleX: -1 }],
-          }}
-        >
-          <FontAwesomeIcon icon={faThumbsDown} color="red" size={22} />
-        </View>
-        <View
-          style={{
-            width: 150,
-            height: 150,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-            marginHorizontal: 20,
-          }}
-        >
-          <Image
-            source={require("../../assets/images/actor.jpeg")} // Replace with your image path
-            style={{ width: 150, height: 150, borderRadius: 75 }}
-          />
-        </View>
-
-        <View
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 75,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 20,
-          }}
-        >
-          {/* <Image
-            source={require("../../assets/images/like.png")} // Replace with your image path
-            style={{ width: 30, height: 30, borderRadius: 50, }}
-          /> */}
-          <FontAwesomeIcon icon={faThumbsUp} color="green" size={22} />
-        </View>
+      <View style={styles.bottomContainer}>
+        <Pressable onPress={submitReview} style={styles.orderButton} >
+          <Text style={styles.buttonText}>Submit Rating</Text>
+        </Pressable>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  ratingSection: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    margin: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    alignItems: "center"
+  },
+  image: {
+    alignItems: "center",
+    borderRadius: 15,
+    height: 210,
+    width: "100%",
+  },
+  foodName: {
+    marginVertical: 10,
+    fontFamily: "Poppins-Medium",
+    fontSize: 16
+  },
+  textInput: {
+    width: "100%",
+    height: 200,
+    borderRadius: 15,
+    backgroundColor: "#F3F3F3",
+    padding: 10,
+    fontFamily: "Poppins-Medium",
+    color: "#676767",
+    textAlignVertical: "top",
+    marginTop: 25
+  },
+  bottomContainer: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 20,
+    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+  },
+  orderButton: {
+    backgroundColor: "#FFC300",
+    fontSize: 17,
+    fontFamily: "Poppins-Medium",
+    textAlign: "right",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontFamily: "Poppins-Medium",
+    fontSize: 16,
+    textAlign: "center",
+  },
+});

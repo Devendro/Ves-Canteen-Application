@@ -26,8 +26,9 @@ import BottomSheet, {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 
-const Foods = ({ route }) => {
+const Foods = ({ route, state }) => {
   const navigation = useNavigation();
+  const [page, setPage] = useState(1)
   const dispatch = useDispatch();
   const bottomSheetRef = useRef();
   const snapPoints = useMemo(() => ["85%"], []);
@@ -40,7 +41,6 @@ const Foods = ({ route }) => {
   const [foods, setFoods] = useState();
   const [sortBy, setSortBy] = useState();
   const [foodDetail, setFoodDetail] = useState();
-
 
   /**
    * @description useEffect to call functions on initial screen load
@@ -55,7 +55,7 @@ const Foods = ({ route }) => {
   const getAllFoods = () => {
     dispatch(
       getFoods(
-        { keyword: route?.params?.keyword ? route.params.keyword : "" },
+        { keyword: route?.params?.keyword ? route.params.keyword : "", category: route?.params?.category, page: 1 },
         (res) => {
           setFoods(res);
         }
@@ -68,12 +68,24 @@ const Foods = ({ route }) => {
    * @param {filterOptionName} string
    */
   const handleFilterChanges = (filterOptionName) => {
+    const filterObj = {
+      ...filters,
+      [filterOptionName]: !filters[filterOptionName]
+    }
     setFilters((previousState) => {
       return {
         ...previousState,
         [filterOptionName]: !previousState[filterOptionName],
       };
     });
+    dispatch(
+      getFoods(
+        { keyword: route?.params?.keyword ? route.params.keyword : "", ...filterObj },
+        (res) => {
+          setFoods(res);
+        }
+      )
+    );
   };
 
   /**
@@ -95,6 +107,30 @@ const Foods = ({ route }) => {
     ),
     []
   );
+
+  /**
+   * @description This function will be called when the FlatList is scrolled to the bottom
+   */
+  const handleEndReached = () => {
+    if (foods.hasNextPage) {
+      if (foods.page == page) {
+        setPage(foods.nextPage)
+        dispatch(
+          getFoods(
+            { keyword: route?.params?.keyword ? route.params.keyword : "", category: route?.params?.category, page: foods.nextPage },
+            (res) => {
+              let arr = [...foods.docs, ...res.docs]
+              let obj = {...res}
+              obj.docs = arr
+              setFoods(obj)
+            }
+          )
+        );
+      }
+
+    }
+
+  };
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -187,6 +223,8 @@ const Foods = ({ route }) => {
             }}
           />
         )}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5} // Adjust the threshold as needed
       />
       <BottomSheet
         ref={bottomSheetRef}
@@ -221,8 +259,8 @@ const styles = StyleSheet.create({
     paddingTop: 18,
   },
   filters: {
-    height: 38,
     margin: 10,
+    minHeight: 35,
   },
   filterOption: {
     flexDirection: "row",
@@ -231,6 +269,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderWidth: 0.7,
     borderRadius: 7,
+    minHeight: 35
   },
   filterText: {
     fontFamily: "Poppins-Medium",
