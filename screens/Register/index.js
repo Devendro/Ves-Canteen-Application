@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  StatusBar
 } from "react-native";
 import {
   faCircleInfo,
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
   head: {
     backgroundColor: "#FFC300",
     width: screenWidth,
-    height: 245,
+    height: 225,
     justifyContent: "center",
     alignItems: "center",
     borderBottomLeftRadius: screenWidth,
@@ -226,7 +228,8 @@ const Register = () => {
   };
 
   return (
-    <View style={{ flex: 1, flexDirection: "column", backgroundColor: "#fff" }}>
+    <KeyboardAvoidingView style={{ flex: 1, flexDirection: "column", backgroundColor: "#fff" }}>
+      <StatusBar backgroundColor="#FFC300" barStyle="dark-content"/>
       <View style={[styles.head]}>
         <Text style={styles.headMainText}>Register</Text>
         <Text style={styles.headText}>Create an Account</Text>
@@ -474,7 +477,7 @@ const Register = () => {
           <Text style={{ ...styles.register, color: "#FFC300" }}>Login</Text>
         </TouchableOpacity>
       </Animated.View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

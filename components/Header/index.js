@@ -41,7 +41,7 @@ const Header = ({ title, showProfile = true }) => {
       >
         {title}
       </Text>
-      {showProfile ? <Pressable
+      {showProfile && userDetail?.loggedIn ? <Pressable
         style={{
           width: 50,
           height: 50,

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import {
   faEnvelope,
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
   head: {
     backgroundColor: "#FFC300",
     width: screenWidth,
-    height: 245,
+    height: 225,
     justifyContent: "center",
     alignItems: "center",
     borderBottomLeftRadius: screenWidth,
@@ -159,6 +160,7 @@ const Login = ({route}) => {
 
   return (
     <View style={{ flex: 1, flexDirection: "column", backgroundColor: "#fff" }}>
+      <StatusBar backgroundColor="#FFC300" barStyle="dark-content"/>
       <View style={[styles.head]}>
         <Text style={styles.headMainText}>Login</Text>
         <Text style={styles.headText}>Welcome back</Text>

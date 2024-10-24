@@ -14,13 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getALlUserOrders } from "../../context/actions/order";
 import UnloadedOrderedCard from "../../components/UnloadedOrderedCard";
 import { SocketContext } from "../../context/actions/socket";
+import NotFound from "../../components/NotFound";
 
 const Orders = () => {
   const { backendSocket } = useContext(SocketContext);
   const userDetails = useSelector((state) => state?.user)
   const dispatch = useDispatch();
   const [orders, setOrders] = useState({});
-  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderLoading, setOrderLoading] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const Orders = () => {
     );
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     backendSocket.off("orderStatusUpdate").on("orderStatusUpdate", (res, err) => {
       if (res?.user == userDetails._id) {
         let mainOrderIndex = orders?.docs?.findIndex(item => item._id == res?.mainOrderId);
@@ -50,7 +51,7 @@ const Orders = () => {
 
     })
   }, [orders])
- 
+
   const refreshOrder = () => {
     setRefreshing(true)
     dispatch(
@@ -72,7 +73,7 @@ const Orders = () => {
           <UnloadedOrderedCard />
         </View>
       )}
-
+      {(!orders?.docs || orders?.docs?.length == 0) && <NotFound />}
       {orders && (
         <FlatList
           style={styles.orderContainer}
@@ -82,7 +83,9 @@ const Orders = () => {
           refreshControl={<RefreshControl refreshing={refreshing}
             onRefresh={refreshOrder} colors={["#FFC300"]} tintColor={"#FFC300"} />}
         />
-      )}
+      )
+      }
+
       <FloatingButton />
     </View>
   );
