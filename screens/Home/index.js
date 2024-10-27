@@ -33,6 +33,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { FLOATING_BUTTON } from "../../context/constants/food";
 import FloatingButton from "../../components/FloatingButton";
 import Animated from "react-native-reanimated";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -182,7 +184,7 @@ export default function Home() {
               navigation.navigate("SettingMenu");
             }}
           >
-            <View
+            {userDetail?.loggedIn ? <View
               style={{
                 height: 40,
                 width: 40,
@@ -198,7 +200,18 @@ export default function Home() {
                 fontSize: 20,
                 marginTop: 4
               }}>{userDetail?.name?.charAt(0)}</Text>
-            </View>
+            </View> : <View
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 40,
+                backgroundColor: "rgba(255, 195, 0, 0.2)",
+                textAlign: "center",
+                alignItems: "center",
+                justifyContent: 'center'
+              }}>
+              <FontAwesomeIcon icon={faUser} color="#FFC300"/>
+            </View>}
             {/* <Image
               source={require("../../assets/images/actor.jpeg")}
               style={{ width: 40, height: 40, borderRadius: 10 }}
@@ -263,7 +276,7 @@ export default function Home() {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Foods", {category: selectedCategory});
+              navigation.navigate("Foods", { category: selectedCategory });
             }}
             style={{ flexDirection: "row", alignItems: "center" }}
           >

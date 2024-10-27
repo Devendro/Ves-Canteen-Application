@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../context/actions/user";
 import Toast from "react-native-toast-message";
 import PushNotification from "../../PushNotification";
+import LoadingOverlay from "../LoadingOverlay";
 
 const screenWidth = Dimensions.get("window").width;
 const initialColorState = {
@@ -117,8 +118,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const Login = ({route}) => {
+const Login = ({ route }) => {
   const [inputState, setInputState] = useState(initialColorState);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPasssword] = useState(false);
   const dispatch = useDispatch();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -147,20 +149,31 @@ const Login = ({route}) => {
    */
   const handleLogin = async () => {
     let notificationToken = await PushNotification();
+    setLoading(true)
     dispatch(
-      login({...loginData,notificationToken: notificationToken }, (res) => {
-        Toast.show({
-          type: "success",
-          text1: "Login successful",
-        });
-        route?.params?.lastPage ? navigation.navigate(route?.params?.lastPage) : navigation.navigate("Home")
+      login({ ...loginData, notificationToken: notificationToken }, (res) => {
+        setLoading(false)
+        if (!res.errors) {
+          Toast.show({
+            type: "success",
+            text1: "Login successful",
+          });
+          route?.params?.lastPage ? navigation.navigate(route?.params?.lastPage) : navigation.navigate("Home")
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Invalid Credentials",
+          });
+        }
+
       })
     );
   };
 
   return (
     <View style={{ flex: 1, flexDirection: "column", backgroundColor: "#fff" }}>
-      <StatusBar backgroundColor="#FFC300" barStyle="dark-content"/>
+      <StatusBar backgroundColor="#FFC300" barStyle="dark-content" />
+      {loading && <LoadingOverlay />}
       <View style={[styles.head]}>
         <Text style={styles.headMainText}>Login</Text>
         <Text style={styles.headText}>Welcome back</Text>

@@ -56,7 +56,7 @@ const Search = () => {
   }, [searchKeyword]);
 
   // function to handle click on search result
-  const handlePartialSearchClick = (keyowrd) => {
+  const handlePartialSearchClick = (keyword) => {
     let updatedRecentSearches;
 
     // updatedRecentSearches = recentSearchedData.slice(1).concat(data);
@@ -64,7 +64,12 @@ const Search = () => {
     // // Dispatch an action with the updated data
     // dispatch({ type: RECENT_SEARCHED, data: updatedRecentSearches });
 
-    navigation.navigate("Foods", { keyword: keyowrd });
+    navigation.navigate("Foods", { keyword: keyword });
+  };
+
+  // function to handle click on categories
+  const handleCategoriesSearchClick = (category) => {
+    navigation.navigate("Foods", { category: category });
   };
 
   // function to handle click on search result
@@ -101,7 +106,7 @@ const Search = () => {
       <View style={styles.searchBarContainer}>
         <Animated.View sharedTransitionTag="search" style={styles.searchBar}>
           <Pressable
-            style={{ flex: 0.05 }}
+            style={{ flex: 0.05, padding: 10 }}
             onPress={() => {
               Keyboard.dismiss();
               setTimeout(() => {
@@ -192,7 +197,7 @@ const Search = () => {
             data={categoryData}
             keyExtractor={(item) => item?._id}
             renderItem={({ item, index }) => (
-              <Categories item={item} index={index} navigation={navigation} />
+              <Categories item={item} index={index} navigation={navigation} handleCategoriesSearchClick={(category) => {handleCategoriesSearchClick(category)}}/>
             )}
           />
         </View>
@@ -228,7 +233,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
     backgroundColor: "white",
     borderRadius: 10,
-    paddingHorizontal: 15,
+    paddingLeft: 5,
+    paddingRight: 15,
     ...Platform.select({
       ios: {
         shadowColor: "#000",

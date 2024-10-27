@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCartShopping, faCircle, faClockRotateLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -84,7 +84,7 @@ const FloatingButton = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <TouchableWithoutFeedback
         onPress={() => {
           navigateTo("Orders");
         }}
@@ -99,8 +99,8 @@ const FloatingButton = () => {
             />
           </View>
         </Animated.View>
-      </Pressable>
-      <Pressable
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback
         onPress={() => {
           navigateTo("Cart");
         }}
@@ -115,7 +115,7 @@ const FloatingButton = () => {
             />
           </View>
         </Animated.View>
-      </Pressable>
+      </TouchableWithoutFeedback>
       <Pressable
         style={styles.contentContainer}
         onPress={() => {
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     bottom: 50,
     right: 30,
     borderRadius: 50,
+    zIndex: 1000,
   },
   iconContainer: {
     width: 60,

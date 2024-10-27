@@ -3,11 +3,14 @@ import { APIURL } from "../constants/api";
 import ApiClient from "../../api-client";
 import {
   LOGIN,
+  REGISTER,
   LOGOUT,
   USER_LOGIN,
+  USER_REGISTER,
   SHOW_WELCOME_MESSAGE,
   TOKEN,
 } from "../constants/user";
+import Toast from "react-native-toast-message";
 
 export const login = (data, callback) => {
   return (dispatch) => {
@@ -22,12 +25,27 @@ export const login = (data, callback) => {
       } else if (response.messageID === 404) {
         return callback(response);
       } else {
-        switch (response.errors) {
-          case "WRONG_PASSWORD":
-            break;
-          case "USER_INACTIVE":
-            break;
-        }
+        callback(response)
+      }
+    });
+  };
+};
+
+
+export const register = (data, callback) => {
+  return (dispatch) => {
+    ApiClient.post(`${APIURL}${USER_REGISTER}`, data).then((response) => {
+    //   dispatch({ type: "ISLOADING", data: false });
+      if (response.data && response.data.token) {
+        dispatch({ type: REGISTER, data: response.data });
+        // dispatch({ type: SHOW_WELCOME_MESSAGE, data: false });
+        AsyncStorage.setItem(TOKEN, JSON.stringify(response.data.token));
+        AsyncStorage.setItem(LOGOUT, JSON.stringify(false));
+        return callback(response);
+      } else if (response.messageID === 404) {
+        return callback(response);
+      } else {
+        return callback(response);
       }
     });
   };

@@ -19,6 +19,7 @@ import Foods from "./screens/Foods";
 import Toast from "react-native-toast-message";
 import Orders from "./screens/Orders";
 import SettingMenu from "./screens/SettingMenu";
+import About from "./screens/About";
 import Profile from "./screens/Profile";
 import { Review } from "./screens/Review";
 import { socket, backendSocket, SocketContext } from "./context/actions/socket";
@@ -89,6 +90,7 @@ export default function App() {
                 <Stack.Screen name="SettingMenu" component={SettingMenu} options={{ animation: "slide_from_right" }} />
                 <Stack.Screen name="Profile" component={Profile} options={{ animation: "slide_from_bottom" }} />
                 <Stack.Screen name="Review" component={Review} />
+                <Stack.Screen name="About" component={About} />
               </Stack.Navigator>
             </NavigationContainer>
           </SocketContext.Provider>

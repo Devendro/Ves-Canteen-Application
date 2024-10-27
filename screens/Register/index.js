@@ -28,6 +28,11 @@ import {
   validatePassword,
   confirmPasswordMatches,
 } from "./validation.js";
+import LoadingOverlay from "../LoadingOverlay/index.js";
+import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
+import { register } from "../../context/actions/user.js";
+import PushNotification from "../../PushNotification";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -148,6 +153,7 @@ const ControlledTooltip = (props) => {
 const Register = () => {
   // States and Variables
   const [inputState, setInputState] = useState(initialColorState);
+  const dispatch = useDispatch();
   const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
@@ -156,6 +162,7 @@ const Register = () => {
   });
   const [showPassword, setShowPasssword] = useState(false);
   const [showConfirmPassword, setShowConfirmPasssword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errorValidation, setErrorValidation] = useState({
     name: false,
     email: false,
@@ -227,8 +234,36 @@ const Register = () => {
     }
   };
 
+  const registerUser = async () => {
+    if(registerData.password != registerData.confirmPassword){
+      Toast.show({
+        type: "error",
+        text1: "Password mismatch"
+      })
+    }else if(Object.values(errorValidation).some(value => value === true)){
+      Toast.show({
+        type: "error",
+        text1: "Please fill all the information"
+      })
+    }else{
+      setLoading(true)
+      let notificationToken = await PushNotification();
+      dispatch(register({...registerData, notificationToken: notificationToken}, (response)=> {
+        setLoading(false)
+        if(!response.error){
+          navigation.push("Home");
+        }else{
+          Toast.show({
+            type: "error",
+            text1: "Invalid Details",
+          });
+        }
+      }))
+    }
+  }
   return (
     <KeyboardAvoidingView style={{ flex: 1, flexDirection: "column", backgroundColor: "#fff" }}>
+      {loading && <LoadingOverlay/>}
       <StatusBar backgroundColor="#FFC300" barStyle="dark-content"/>
       <View style={[styles.head]}>
         <Text style={styles.headMainText}>Register</Text>
@@ -460,7 +495,7 @@ const Register = () => {
       <Animated.View
         entering={FadeInDown.delay(1000).duration(1000).springify()}
       >
-        <TouchableOpacity style={styles.registerButton}>
+        <TouchableOpacity style={styles.registerButton} onPress={registerUser}>
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
       </Animated.View>

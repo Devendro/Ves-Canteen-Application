@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
   filters: {
     margin: 10,
     minHeight: 35,
+    maxHeight: 35,
   },
   filterOption: {
     flexDirection: "row",
@@ -273,6 +274,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontFamily: "Poppins-Medium",
-    color: "#000",
+    color: "#000"
   },
 });

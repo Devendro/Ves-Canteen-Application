@@ -7,9 +7,9 @@ import Animated, { FadeInDown, SlideInRight } from "react-native-reanimated";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
 import { APIURL } from "../../../context/constants/api";
 
-const Categories = ({ item, index }) => {
+const Categories = ({ item, index, handleCategoriesSearchClick }) => {
   return (
-    <TouchableNativeFeedback>
+    <TouchableNativeFeedback onPress={() => {handleCategoriesSearchClick(item?._id)}}>
       <View style={styles.categoryCard}>
         <View style={styles.categoryHeading}>
           <CachedImage

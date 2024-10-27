@@ -77,7 +77,7 @@ const SettingMenu = () => {
           </Pressable>
         </View>
         <View style={styles.lastSection}>
-          <Pressable style={styles.ordersOption}>
+          <Pressable style={styles.ordersOption} onPress={() => { navigateTo("About") }}>
             <FontAwesomeIcon icon={faCircleInfo} color="#51636E" style={styles.ordersOptionIcon} size={18} />
             <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
               <Text style={styles.ordersOptionText}>About Us</Text>

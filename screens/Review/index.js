@@ -32,7 +32,7 @@ export function Review({ route }) {
       if (res) {
         Toast.show({
           type: "success",
-          text1: "Review Submitted",
+          text1: "Thanks for your feedback!",
         });
         navigation.goBack();
       }
@@ -71,6 +71,7 @@ export function Review({ route }) {
         <Pressable onPress={submitReview} style={styles.orderButton} >
           <Text style={styles.buttonText}>Submit Rating</Text>
         </Pressable>
+        <Toast />
       </View>
     </View>
   );

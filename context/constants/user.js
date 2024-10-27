@@ -5,3 +5,4 @@ export const SHOW_WELCOME_MESSAGE = "SHOW_WELCOME_MESSAGE"
 export const TOKEN = "TOKEN"
 
 export const USER_LOGIN = "/api/login"
+export const USER_REGISTER = "/api/register"

@@ -73,7 +73,7 @@ const Orders = () => {
           <UnloadedOrderedCard />
         </View>
       )}
-      {(!orders?.docs || orders?.docs?.length == 0) && <NotFound />}
+      {(!orders?.docs || orders?.docs?.length == 0) && !orderLoading && <NotFound />}
       {orders && (
         <FlatList
           style={styles.orderContainer}
