@@ -132,7 +132,7 @@ export default function Home() {
         // paddingTop: 43,
       }}
     >
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF"/>
       <ScrollView stickyHeaderIndices={[3]} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>

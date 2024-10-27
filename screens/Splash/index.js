@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import React from "react";
 import LottieView from "lottie-react-native";
 import {
@@ -15,6 +15,7 @@ const Splash = () => {
   }, 3000);
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#FFC300" barStyle="dark-content"/>
       <LottieView
         style={styles.icon}
         source={require("../../assets/images/splash.json")}
@@ -25,7 +26,7 @@ const Splash = () => {
         entering={FadeInUp.delay(2000).springify().damping(8)}
         style={styles.text}
       >
-        VESTEEN
+        VESIT CANTEEN
       </Animated.Text>
     </View>
   );

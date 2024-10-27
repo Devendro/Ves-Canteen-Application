@@ -63,7 +63,7 @@ export default function App() {
           <SocketContext.Provider value={{ socket, backendSocket }}>
             <NavigationContainer>
               <Stack.Navigator
-                initialRouteName={showOnboarding ? "Onboarding" : "Home"}
+                initialRouteName={showOnboarding ? "Onboarding" : "Splash"}
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="Splash" component={Splash} />
