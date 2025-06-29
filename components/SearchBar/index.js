@@ -16,7 +16,7 @@ const SearchBar = () => {
           }}
         >
           <Animated.View
-            sharedTransitionTag="search"
+            // sharedTransitionTag="search"
             style={{
               alignItems: "center",
               flexDirection: "row",
@@ -25,20 +25,22 @@ const SearchBar = () => {
               borderRadius: 10,
               paddingHorizontal: 15,
               marginHorizontal: 10,
-              ...Platform.select({
-                ios: {
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 4,
-                  },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 6,
-                },
-                android: {
-                  elevation: 4,
-                },
-              }),
+              borderWidth: 2,
+              borderColor: "#F1F1F1"
+              // ...Platform.select({
+              //   ios: {
+              //     shadowColor: "#000",
+              //     shadowOffset: {
+              //       width: 0,
+              //       height: 4,
+              //     },
+              //     shadowOpacity: 0.4,
+              //     shadowRadius: 6,
+              //   },
+              //   android: {
+              //     elevation: 4,
+              //   },
+              // }),
             }}
           >
             <FontAwesomeIcon icon={faSearch} color="#667C8A" size={15} />

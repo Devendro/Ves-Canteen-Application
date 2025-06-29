@@ -68,7 +68,7 @@ const SettingMenu = () => {
             </View>
           </Pressable>
           <View style={{ borderWidth: 0.2, borderColor: "#DADADA", left: 40, width: "90.7%" }}></View>
-          <Pressable style={styles.ordersOption}>
+          <Pressable style={styles.ordersOption} onPress={() => { navigateTo("UserReviews") }}>
             <FontAwesomeIcon icon={faStar} color="#51636E" style={styles.ordersOptionIcon} size={18} />
             <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
               <Text style={styles.ordersOptionText}>Your Reviews</Text>
@@ -85,7 +85,7 @@ const SettingMenu = () => {
             </View>
           </Pressable>
           <View style={{ borderWidth: 0.2, borderColor: "#DADADA", left: 40, width: "90.7%" }}></View>
-          <Pressable style={styles.ordersOption}>
+          <Pressable style={styles.ordersOption} onPress={() => { navigateTo("Feedback") }}>
             <FontAwesomeIcon icon={faComment} color="#51636E" style={styles.ordersOptionIcon} size={18} />
             <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: "space-between", width: "100%" }}>
               <Text style={styles.ordersOptionText}>Give a Feedback</Text>
